@@ -2,7 +2,7 @@
 
 import { Header } from "@/components/Header";
 import { Hero } from "@/components/HeroSection/Hero";
-import  Explore  from "@/components/HowItWorks/HowItWorks";
+import Explore from "@/components/HowItWorks/HowItWorks";
 import { PopularServices } from "@/components/Services/PopularServices";
 import ContactUs from "@/components/ContactUs";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
@@ -22,7 +22,7 @@ export default function Home() {
           title="StuGig – Freelance Marketplace for Students"
           headline="Bid Smart. Work Smart. Grow Smart."
           subheading="Join StuGig to find freelance gigs, post student projects, and get AI-matched to the perfect opportunity in your campus economy."
-          ctaText="Explore Talents"
+          ctaText="Find Talent"
           ctaSecondaryText="Become a Freelancer"
           ctaHref="/jobs"
           secondaryCtaHref="/signup"
@@ -31,7 +31,7 @@ export default function Home() {
         {/* Explore Section */}
         <SectionSpacer>
           <MaxWidthWrapper>
-            <div id="explore" >
+            <div id="explore">
               <Explore />
             </div>
           </MaxWidthWrapper>
