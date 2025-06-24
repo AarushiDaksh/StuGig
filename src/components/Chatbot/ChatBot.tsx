@@ -1,10 +1,11 @@
-'use client';
+'use client'
 import React, { useState, useEffect, useRef } from 'react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { marked } from 'marked';
 import { SendIcon } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface ChatMessage {
@@ -12,6 +13,7 @@ interface ChatMessage {
   isUser: boolean;
   timestamp: Date;
 }
+
 
 const SYSTEM_PROMPT = `You are StuGig's virtual assistant. Your job is to provide helpful, accurate, and relevant answers ONLY about StuGig's services and features.
 
@@ -57,7 +59,7 @@ const ChatBot = () => {
   const chatRef = useRef<any>(null);
 
   useEffect(() => {
-    const apiKey = process.env.GEMINI_API_KEY;
+    const apiKey = process.env.NEXT_PUBLIC_API_KEY;
     if (!apiKey) return;
     generativeClient.current = new GoogleGenerativeAI(apiKey);
     modelRef.current = generativeClient.current.getGenerativeModel({
@@ -117,7 +119,7 @@ const ChatBot = () => {
             ref={userInputRef}
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
-            placeholder="Ask something about StuGig..."
+            placeholder="Ask something about SkillSwap..."
             className="flex-1 text-sm"
           />
           <Button type="submit" disabled={isTyping || !userInput.trim()} size="icon">
