@@ -47,38 +47,30 @@ export const FloatingNav = ({
     }
   });
 
-  // Close menu on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        loginDropdownOpen &&
+        loginDropdownRef.current &&
+        !loginDropdownRef.current.contains(event.target as Node)
+      ) {
+        setLoginDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [loginDropdownOpen]);
 
-  // Close login dropdown on outside click
-useEffect(() => {
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      loginDropdownOpen &&
-      loginDropdownRef.current &&
-      !loginDropdownRef.current.contains(event.target as Node)
-    ) {
-      setLoginDropdownOpen(false);
-    }
-  };
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, [loginDropdownOpen]);
-
-// Close login dropdown on Escape
-useEffect(() => {
-  const handleEscape = (event: KeyboardEvent) => {
-    if (event.key === "Escape") {
-      setLoginDropdownOpen(false);
-    }
-  };
-  document.addEventListener("keydown", handleEscape);
-  return () => {
-    document.removeEventListener("keydown", handleEscape);
-  };
-}, []);
-
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setLoginDropdownOpen(false);
+        setMobileMenuOpen(false);
+      }
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -91,23 +83,8 @@ useEffect(() => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [mobileMenuOpen]);
-
-  // Close on Escape key
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setMobileMenuOpen(false);
-      }
-    };
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, []);
 
   return (
     <>
@@ -146,27 +123,26 @@ useEffect(() => {
 
           <div className="flex items-center gap-2">
             {showThemeToggle && <ThemeToggle />}
-                    <div className="relative" ref={loginDropdownRef}>
-          <button
-            onClick={() => setLoginDropdownOpen(!loginDropdownOpen)}
-            className="hidden sm:block border text-xs font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-3 py-1.5 rounded-full"
-          >
-            <span>Login</span>
-            <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent h-px" />
-          </button>
-
-          {loginDropdownOpen && (
-            <div className="absolute top-full mt-2 right-0 bg-white dark:bg-black border border-neutral-200 dark:border-white/[0.2] shadow-lg rounded-xl w-56 p-3 z-50 space-y-2">
-
-              <button className="w-full text-sm font-medium px-4 py-2 rounded-lg text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
-                Sign Up as Freelancer
+            <div className="relative" ref={loginDropdownRef}>
+              <button
+                onClick={() => setLoginDropdownOpen(!loginDropdownOpen)}
+                className="hidden sm:block border text-xs font-medium relative border-neutral-200 dark:border-white/[0.2] text-black dark:text-white px-3 py-1.5 rounded-full"
+              >
+                <span>Login</span>
+                <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent h-px" />
               </button>
-              <button className="w-full text-sm font-medium px-4 py-2 rounded-lg text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
-                Post Jobs
-              </button>
+
+              {loginDropdownOpen && (
+                <div className="absolute top-full mt-2 right-0 bg-white dark:bg-black border border-neutral-200 dark:border-white/[0.2] shadow-lg rounded-xl w-56 p-3 z-50 space-y-2">
+                  <button className="w-full text-sm font-medium px-4 py-2 rounded-lg text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+                    Login as a Freelancer
+                  </button>
+                  <button className="w-full text-sm font-medium px-4 py-2 rounded-lg text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+                    Login as a Client
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -211,8 +187,16 @@ useEffect(() => {
                   <span className="text-sm font-medium">{navItem.name}</span>
                 </Link>
               ))}
+            </div>
 
-              
+            {/* Login options in mobile dropdown */}
+            <div className="pt-3 border-t border-neutral-200 dark:border-neutral-700 mt-2">
+              <button className="w-full text-sm font-medium px-3 py-2 rounded-lg text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors">
+                Login as a Freelancer
+              </button>
+              <button className="w-full text-sm font-medium px-3 py-2 rounded-lg text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors mt-1">
+                Login as a Client
+              </button>
             </div>
           </motion.div>
         )}

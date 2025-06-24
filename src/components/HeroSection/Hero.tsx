@@ -35,8 +35,8 @@ const Hero = React.forwardRef<HTMLDivElement, HeroProps>(
       title = "StuGig – Freelance Smarter",
       headline = "Bid Smarter. Work Faster. Grow as a Student.",
       subheading = "StuGig helps students earn with freelance gigs — powered by AI job matching, secure payments, real-time chat, and a peer-reviewed reputation system.",
-      ctaText = "Be a Client",
-      ctaSecondaryText = "or Freelancer",
+      ctaText = "Explore Talents",
+      ctaSecondaryText = "Become Freelancer",
       ...props
     },
     ref

@@ -65,7 +65,7 @@ const HeroSection = React.forwardRef<HTMLDivElement, HeroSectionProps>(
         gradient: "Earn as a Student.",
       },
       description = "StuGig is the ultimate freelance marketplace built for students to showcase their skills, win gigs, and earn securely through AI-powered job matching.",
-      ctaText = "Explore Gigs",
+      ctaText = "Explore Talents",
       ctaHref = "/jobs",
       bottomImage = {
         light: "/images/stugig-light-dashboard.png",  

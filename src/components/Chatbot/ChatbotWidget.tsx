@@ -105,7 +105,7 @@ export function ChatbotWidget() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 text-foreground">
                     <MessageCircle className="size-5 text-purple-500" />
-                    <span className="font-medium">SkillSwap Assistant</span>
+                    <span className="font-medium">StuGig Assistant</span>
                   </div>
                   <Button
                     variant="ghost"

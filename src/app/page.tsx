@@ -22,7 +22,7 @@ export default function Home() {
           title="StuGig – Freelance Marketplace for Students"
           headline="Bid Smart. Work Smart. Grow Smart."
           subheading="Join StuGig to find freelance gigs, post student projects, and get AI-matched to the perfect opportunity in your campus economy."
-          ctaText="Explore Jobs"
+          ctaText="Explore Talents"
           ctaSecondaryText="Become a Freelancer"
           ctaHref="/jobs"
           secondaryCtaHref="/signup"
