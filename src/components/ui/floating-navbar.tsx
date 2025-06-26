@@ -47,6 +47,9 @@ export const FloatingNav = ({
     }
   });
 
+  // Close menu on click outside
+
+  // Close login dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -58,18 +61,22 @@ export const FloatingNav = ({
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, [loginDropdownOpen]);
 
+  // Close login dropdown on Escape
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setLoginDropdownOpen(false);
-        setMobileMenuOpen(false);
       }
     };
     document.addEventListener("keydown", handleEscape);
-    return () => document.removeEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("keydown", handleEscape);
+    };
   }, []);
 
   useEffect(() => {
@@ -101,7 +108,9 @@ export const FloatingNav = ({
         >
           {showLogo && (
             <div className="flex items-center gap-2 font-bold">
-              <div className="size-6 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs">S</div>
+              <div className="size-6 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs">
+                S
+              </div>
               <span className="text-sm">StuGig</span>
             </div>
           )}
@@ -122,7 +131,6 @@ export const FloatingNav = ({
           </div>
 
           <div className="flex items-center gap-2">
-            {showThemeToggle && <ThemeToggle />}
             <div className="relative" ref={loginDropdownRef}>
               <button
                 onClick={() => setLoginDropdownOpen(!loginDropdownOpen)}
@@ -151,6 +159,7 @@ export const FloatingNav = ({
                 </div>
               )}
             </div>
+            {showThemeToggle && <ThemeToggle />}
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -158,7 +167,9 @@ export const FloatingNav = ({
               aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
               aria-expanded={mobileMenuOpen}
             >
-              <span className="sr-only">{mobileMenuOpen ? "Close menu" : "Open menu"}</span>
+              <span className="sr-only">
+                {mobileMenuOpen ? "Close menu" : "Open menu"}
+              </span>
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
@@ -190,7 +201,9 @@ export const FloatingNav = ({
                   className="relative flex items-center space-x-2 text-neutral-700 dark:text-neutral-200 hover:text-black dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-800/50 p-2 rounded-lg transition-colors duration-150"
                 >
                   {navItem.icon && (
-                    <span className="text-neutral-500 dark:text-neutral-400">{navItem.icon}</span>
+                    <span className="text-neutral-500 dark:text-neutral-400">
+                      {navItem.icon}
+                    </span>
                   )}
                   <span className="text-sm font-medium">{navItem.name}</span>
                 </Link>
@@ -211,6 +224,20 @@ export const FloatingNav = ({
                 Login as a Client
               </Link>
             </div>
+          <div className="pt-3 border-t border-neutral-200 dark:border-neutral-700 mt-2">
+            <Link
+              href="/login/freelancer"
+              className="block w-full text-sm font-medium px-3 py-2 rounded-lg text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            >
+              Login as a Freelancer
+            </Link>
+            <Link
+              href="/login/client"
+              className="block w-full text-sm font-medium px-3 py-2 rounded-lg text-left mt-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            >
+              Login as a Client
+            </Link>
+          </div>
           </motion.div>
         )}
       </AnimatePresence>
