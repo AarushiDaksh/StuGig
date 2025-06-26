@@ -9,7 +9,7 @@ import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import SectionSpacer from "@/components/SectionSpacer";
 import { ChatbotWidget } from "@/components/Chatbot/ChatbotWidget";
 
-export default function Home() {
+export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
@@ -37,7 +37,7 @@ export default function Home() {
           </MaxWidthWrapper>
         </SectionSpacer>
 
-        {/* Features / Popular Services */}
+        {/* Popular Services */}
         <SectionSpacer size="none">
           <MaxWidthWrapper>
             <div id="features">
@@ -46,7 +46,7 @@ export default function Home() {
           </MaxWidthWrapper>
         </SectionSpacer>
 
-        {/* Contact */}
+        {/* Contact Section */}
         <SectionSpacer only="bottom">
           <MaxWidthWrapper>
             <div id="contact">

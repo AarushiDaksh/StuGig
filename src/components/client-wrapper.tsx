@@ -1,16 +1,19 @@
 "use client";
 
 import { SessionProvider } from "next-auth/react";
-import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
+import { Provider as ReduxProvider } from "react-redux";
+import { ThemeProvider } from "next-themes";
+import { store } from "@/store";
 
 export default function ClientWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <SessionProvider>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        {children}
-        <Toaster />
-      </ThemeProvider>
-    </SessionProvider>
+    <ReduxProvider store={store}>
+      <SessionProvider>
+        {/* Only wrap body content with ThemeProvider */}
+        <ThemeProvider attribute="class" enableSystem defaultTheme="system">
+          {children}
+        </ThemeProvider>
+      </SessionProvider>
+    </ReduxProvider>
   );
 }
