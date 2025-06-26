@@ -210,11 +210,6 @@ export const FloatingNav = ({
                 </Link>
               ))}
             </div>
-<<<<<<< HEAD
-=======
-
-            {/* Login options in mobile dropdown */}
-            
 
           <div className="pt-3 border-t border-neutral-200 dark:border-neutral-700 mt-2">
             <Link
@@ -230,8 +225,6 @@ export const FloatingNav = ({
               Login as a Client
             </Link>
           </div>
-
->>>>>>> Aarushi
           </motion.div>
         )}
       </AnimatePresence>
