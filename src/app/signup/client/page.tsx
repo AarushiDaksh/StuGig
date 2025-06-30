@@ -37,7 +37,7 @@ export default function Signup() {
       const res = await fetch("/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({ username, email, password, role: "client" }),
       });
 
       if (res.status === 409)
@@ -45,7 +45,7 @@ export default function Signup() {
       if (!res.ok) return setError("Something went wrong. Please try again");
 
       setError("");
-      router.push("/login/freelancer");
+      router.push("/login/client");
     } catch (err) {
       console.error(err);
       setError("Network error. Please try again.");
@@ -59,7 +59,7 @@ export default function Signup() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-md bg-white p-8 rounded shadow">
         <h1 className="mb-6 text-center text-2xl font-semibold text-gray-700">
-          Register as Freelancer
+          Register as Client
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -90,7 +90,7 @@ export default function Signup() {
         </form>
         <p className="mt-4 text-center text-gray-500">— OR —</p>
         <Link
-          href="/login/freelancer"
+          href="/login/client"
           className="block text-center text-blue-600 hover:underline"
         >
           Login with an existing account
