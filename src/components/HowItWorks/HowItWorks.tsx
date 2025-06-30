@@ -87,8 +87,15 @@ export default function Explore() {
         </div>
 
         <div className="grid lg:grid-cols-[1fr_2fr] gap-4 sm:gap-8 items-start">
-          <nav className="relative flex flex-col gap-6 sm:gap-8 mx-auto lg:mx-0 max-w-xs hidden lg:flex" aria-label="Process steps">
-            <div className="absolute left-14 top-6 w-0.5 bg-muted" style={{ height: "calc(100% - 12px)" }} aria-hidden="true" />
+          <nav
+            className="relative flex-col gap-6 sm:gap-8 mx-auto lg:mx-0 max-w-xs hidden lg:flex"
+            aria-label="Process steps"
+          >
+            <div
+              className="absolute left-14 top-6 w-0.5 bg-muted"
+              style={{ height: "calc(100% - 12px)" }}
+              aria-hidden="true"
+            />
             {steps.map((step, index) => (
               <button
                 key={step.id}

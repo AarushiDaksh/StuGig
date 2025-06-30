@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
+enum Role {
+  CLIENT = "client",
+  FREELANCER = "freelancer",
+}
+
 const userSchema = new Schema(
   {
     username: {
@@ -15,14 +20,20 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: false,
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: Role,
+      required: true,
     },
   },
   {
     timestamps: true,
-    collection: "stugigUsers", 
+    collection: "stugigUsers",
   }
 );
 
 //"UserStugig" as the model name
-export default mongoose.models.UserStugig || mongoose.model("UserStugig", userSchema);
+export default mongoose.models.UserStugig ||
+  mongoose.model("UserStugig", userSchema);
