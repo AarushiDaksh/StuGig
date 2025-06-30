@@ -13,15 +13,17 @@ const handler = NextAuth({
         username: { label: "Username", type: "text" },
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
+        role: { label: "Role", type: "text" },
       },
       async authorize(credentials) {
         await connect();
 
-        if (!credentials?.email || !credentials?.password) return null;
+        if (!credentials?.email || !credentials?.password || !credentials?.role)
+          return null;
 
         const user = await User.findOne({ email: credentials.email });
 
-        if (user) {
+        if (user && user.role === credentials.role) {
           const isPasswordCorrect = await bcrypt.compare(
             credentials.password,
             user.password
@@ -31,6 +33,7 @@ const handler = NextAuth({
               id: user._id.toString(),
               name: user.username,
               email: user.email,
+              role: user.role,
             };
           }
         }

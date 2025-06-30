@@ -16,7 +16,7 @@ export default function Login() {
   useEffect(() => {
     if (sessionStatus === "authenticated") {
       dispatch(loginSuccessful(session?.user));
-      router.replace("/find-work");
+      router.replace("/find-talent");
     }
   }, [sessionStatus, session, dispatch, router]);
 
@@ -37,13 +37,14 @@ export default function Login() {
       redirect: false,
       email,
       password,
+      role: "client",
     });
 
     if (res?.error) {
       setError("Invalid email or password");
     } else {
       setError("");
-      router.replace("/find-work");
+      router.replace("/find-talent");
     }
   };
 
@@ -54,7 +55,7 @@ export default function Login() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-md rounded bg-white p-8 shadow">
         <h1 className="mb-6 text-center text-2xl font-semibold text-gray-700">
-          Login as Freelancer
+          Login as Client
         </h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -79,7 +80,7 @@ export default function Login() {
         </form>
         <p className="mt-6 text-center text-gray-500">— OR —</p>
         <Link
-          href="/signup/freelancer"
+          href="/signup/client"
           className="block text-center text-blue-600 hover:underline"
         >
           Register Here

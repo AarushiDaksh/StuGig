@@ -5,10 +5,13 @@ import { NextResponse } from "next/server";
 
 export const POST = async (request: Request) => {
   try {
-    const { username, email, password } = await request.json();
+    const { username, email, password, role } = await request.json();
 
-    if (!username || !email || !password) {
+    if (!username || !email || !password || !role) {
       return new NextResponse("Missing required fields", { status: 400 });
+    }
+    if (!["freelancer", "client"].includes(role)) {
+      return new NextResponse("Invalid role", { status: 400 });
     }
 
     await connect();
@@ -24,11 +27,11 @@ export const POST = async (request: Request) => {
       username,
       email,
       password: hashedPassword,
+      role,
     });
 
     await newUser.save();
     return new NextResponse("User registered successfully", { status: 200 });
-
   } catch (err) {
     console.error("Signup error:", err);
     return new NextResponse("Internal Server Error", { status: 500 });
