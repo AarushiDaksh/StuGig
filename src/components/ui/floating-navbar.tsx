@@ -141,24 +141,23 @@ export const FloatingNav = ({
               </button>
 
               {loginDropdownOpen && (
-              <div className="absolute top-full mt-2 right-0 bg-white dark:bg-black border border-neutral-200 dark:border-white/[0.2] shadow-lg rounded-xl w-56 p-3 z-50 space-y-2">
-                <Link
-                  href="/login/freelancer"
-                  onClick={() => setLoginDropdownOpen(false)}
-                  className="w-full block text-sm font-medium px-4 py-2 rounded-lg text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-                >
-                  Login as a Freelancer
-                </Link>
-                <Link
-                  href="/login/client"
-                  onClick={() => setLoginDropdownOpen(false)}
-                  className="w-full block text-sm font-medium px-4 py-2 rounded-lg text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-                >
-                  Login as a Client
-                </Link>
-              </div>
-            )}
-
+                <div className="absolute top-full mt-2 right-0 bg-white dark:bg-black border border-neutral-200 dark:border-white/[0.2] shadow-lg rounded-xl w-56 p-3 z-50 space-y-2">
+                  <Link
+                    href="/login/freelancer"
+                    onClick={() => setLoginDropdownOpen(false)}
+                    className="w-full block text-sm font-medium px-4 py-2 rounded-lg text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                  >
+                    Login as a Freelancer
+                  </Link>
+                  <Link
+                    href="/login/client"
+                    onClick={() => setLoginDropdownOpen(false)}
+                    className="w-full block text-sm font-medium px-4 py-2 rounded-lg text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                  >
+                    Login as a Client
+                  </Link>
+                </div>
+              )}
             </div>
             {showThemeToggle && <ThemeToggle />}
 
