@@ -20,6 +20,10 @@ export const POST = async (request: Request) => {
       return new NextResponse("Invalid role", { status: 400 });
     }
 
+    if (!["freelancer", "client"].includes(role)) {
+      return new NextResponse("Invalid role", { status: 400 });
+    }
+
     await connect();
 
     const Model = role === "freelancer" ? UserFreelancer : UserClient;
