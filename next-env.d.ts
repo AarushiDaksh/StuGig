@@ -1,30 +1,6 @@
 /// <reference types="next" />
 /// <reference types="next/image-types/global" />
-
-
-// src/next-auth.d.ts or src/types/next-auth.d.ts
-// types/next-auth.d.ts
-import NextAuth from "next-auth";
-
-declare module "next-auth" {
-  interface Session {
-    user: {
-      name?: string | null;
-      email?: string | null;
-      image?: string | null;
-      role?: string | null;
-    };
-  }
-
-  interface User {
-    role?: string;
-  }
-
-  interface JWT {
-    role?: string;
-  }
-}
-
+/// <reference types="next/navigation-types/compat/navigation" />
 
 // NOTE: This file should not be edited
 // see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
