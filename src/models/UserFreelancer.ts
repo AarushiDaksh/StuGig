@@ -17,12 +17,6 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    role: {
-      type: String,
-      enum: Role,
-      required: true,
-
-    },
   },
   {
     timestamps: true,
