@@ -210,20 +210,21 @@ export const FloatingNav = ({
               ))}
             </div>
 
-          <div className="pt-3 border-t border-neutral-200 dark:border-neutral-700 mt-2">
-            <Link
-              href="/login/freelancer"
-              className="block w-full text-sm font-medium px-3 py-2 rounded-lg text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-            >
-              Login as a Freelancer
-            </Link>
-            <Link
-              href="/login/client"
-              className="block w-full text-sm font-medium px-3 py-2 rounded-lg text-left mt-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-            >
-              Login as a Client
-            </Link>
-          </div>
+            <div className="pt-3 border-t border-neutral-200 dark:border-neutral-700 mt-2">
+              <Link
+                href="/login/freelancer"
+                className="block w-full text-sm font-medium px-3 py-2 rounded-lg text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+              >
+                Login as a Freelancer
+              </Link>
+              <Link
+                href="/login/client"
+                className="block w-full text-sm font-medium px-3 py-2 rounded-lg text-left mt-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+              >
+                Login as a Client
+              </Link>
+            </div>
+          
           </motion.div>
         )}
       </AnimatePresence>

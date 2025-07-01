@@ -1,7 +1,9 @@
+// app/api/auth/[...nextauth]/route.ts
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import User from "@/models/User";
+import UserFreelancer from "@/models/UserFreelancer";
+import UserClient from "@/models/UserClient";
 import connect from "@/utlis/db";
 
 const handler = NextAuth({
@@ -10,10 +12,9 @@ const handler = NextAuth({
       id: "credentials",
       name: "Credentials",
       credentials: {
-        username: { label: "Username", type: "text" },
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
-        role: { label: "Role", type: "text" },
+        role: { label: "Role", type: "text" }, 
       },
       async authorize(credentials) {
         await connect();
@@ -21,29 +22,51 @@ const handler = NextAuth({
         if (!credentials?.email || !credentials?.password || !credentials?.role)
           return null;
 
-        const user = await User.findOne({ email: credentials.email });
+        const Model =
+          credentials.role === "freelancer"
+            ? UserFreelancer
+            : credentials.role === "client"
+            ? UserClient
+            : null;
 
-        if (user && user.role === credentials.role) {
-          const isPasswordCorrect = await bcrypt.compare(
-            credentials.password,
-            user.password
-          );
-          if (isPasswordCorrect) {
-            return {
-              id: user._id.toString(),
-              name: user.username,
-              email: user.email,
-              role: user.role,
-            };
-          }
-        }
+        if (!Model) return null;
 
-        return null;
+        const user = await Model.findOne({ email: credentials.email });
+
+        if (!user) return null;
+
+        const isPasswordCorrect = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
+
+        if (!isPasswordCorrect) return null;
+
+        return {
+          id: user._id.toString(),
+          name: user.username,
+          email: user.email,
+          role: credentials.role,
+        };
       },
     }),
   ],
   session: {
     strategy: "jwt",
+  },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user.role;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token?.role) {
+        session.user.role = token.role;
+      }
+      return session;
+    },
   },
   secret: process.env.NEXTAUTH_SECRET,
 });

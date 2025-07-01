@@ -30,10 +30,18 @@ const userSchema = new Schema(
   },
   {
     timestamps: true,
+<<<<<<< HEAD:src/models/User.ts
     collection: "stugigUsers",
+=======
+    collection: "stugigUsersFreelancer", 
+>>>>>>> 90c8d80 (n):src/models/UserFreelancer.ts
   }
 );
 
 //"UserStugig" as the model name
+<<<<<<< HEAD:src/models/User.ts
 export default mongoose.models.UserStugig ||
   mongoose.model("UserStugig", userSchema);
+=======
+export default mongoose.models.UserStugig || mongoose.model("UserStugig", userSchema);
+>>>>>>> 90c8d80 (n):src/models/UserFreelancer.ts

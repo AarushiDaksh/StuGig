@@ -1,7 +1,9 @@
-import User from "@/models/User";
+// app/api/auth/signup/route.ts
 import connect from "@/utlis/db";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
+import UserFreelancer from "@/models/UserFreelancer";
+import UserClient from "@/models/UserClient";
 
 export const POST = async (request: Request) => {
   try {
@@ -14,16 +16,22 @@ export const POST = async (request: Request) => {
       return new NextResponse("Invalid role", { status: 400 });
     }
 
+    if (!["freelancer", "client"].includes(role)) {
+      return new NextResponse("Invalid role", { status: 400 });
+    }
+
     await connect();
 
-    const existingUser = await User.findOne({ email });
+    const Model = role === "freelancer" ? UserFreelancer : UserClient;
+    const existingUser = await Model.findOne({ email });
+
     if (existingUser) {
       return new NextResponse("Email is already in use", { status: 409 });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({
+    const newUser = new Model({
       username,
       email,
       password: hashedPassword,
