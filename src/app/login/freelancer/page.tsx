@@ -82,7 +82,8 @@ export default function FreelancerLoginForm() {
     },
   };
 
-  if (sessionStatus === "loading") return <h1 className="text-center mt-20">Loading...</h1>;
+  if (sessionStatus === "loading")
+    return <h1 className="text-center mt-20">Loading...</h1>;
 
   return (
     <motion.div

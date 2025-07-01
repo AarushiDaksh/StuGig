@@ -15,14 +15,22 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: false,
+      required: true,
+    },
+    role: {
+      type: String,
+      enum: Role,
+      required: true,
+
     },
   },
   {
     timestamps: true,
     collection: "stugigUsersFreelancer", 
+
   }
 );
 
 //"UserStugig" as the model name
 export default mongoose.models.UserStugig || mongoose.model("UserStugig", userSchema);
+
