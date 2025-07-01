@@ -2,8 +2,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import UserFreelancer from "@/models/UserFreelancer";
 import UserClient from "@/models/UserClient";
+import UserFreelancer from "@/models/UserFreelancer";
 import connect from "@/utlis/db";
 
 const handler = NextAuth({
@@ -55,19 +55,18 @@ const handler = NextAuth({
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.role = user.role;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (token?.role) {
-        session.user.role = token.role;
-      }
-      return session;
-    },
+  async jwt({ token, user }) {
+    if (user) {
+      token.role = user.role; // 👈 add to token
+    }
+    return token;
   },
+  async session({ session, token }) {
+    session.user.role = token.role as string; // 👈 now it works in session.user
+    return session;
+  },
+},
+
   secret: process.env.NEXTAUTH_SECRET,
 });
 
