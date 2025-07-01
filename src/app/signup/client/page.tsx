@@ -24,7 +24,7 @@ const signupSchema = z.object({
 
 type SignupFormValues = z.infer<typeof signupSchema>;
 
-export default function FreelancerSignupForm() {
+export default function ClientSignupForm() {
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -46,7 +46,7 @@ export default function FreelancerSignupForm() {
       const res = await fetch("/api/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, role: "freelancer" }),
+        body: JSON.stringify({ ...values, role: "client" }),
       });
 
       if (res.status === 409) {
@@ -55,7 +55,7 @@ export default function FreelancerSignupForm() {
         toast.error("Something went wrong. Please try again.");
       } else {
         toast.success("Account created!", { description: "Redirecting to login..." });
-        router.push("/login/freelancer");
+        router.push("/login/client");
       }
     } catch (err) {
       toast.error("Network error", { description: "Please try again later." });
@@ -102,7 +102,7 @@ export default function FreelancerSignupForm() {
           variants={itemVariants}
           className="mb-6 text-center text-2xl font-bold text-gray-800 dark:text-white"
         >
-          Register as Freelancer
+          Register as Client
         </motion.h2>
 
         <Form {...form}>
@@ -117,7 +117,7 @@ export default function FreelancerSignupForm() {
                     <FormControl>
                       <div className="relative">
                         <SmilePlus className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                        <Input placeholder="FreelancerName" {...field} className="pl-10" />
+                        <Input placeholder="ClientName" {...field} className="pl-10" />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -136,7 +136,7 @@ export default function FreelancerSignupForm() {
                     <FormControl>
                       <div className="relative">
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                        <Input placeholder="freelancer@example.com" {...field} className="pl-10" />
+                        <Input placeholder="client@example.com" {...field} className="pl-10" />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -193,7 +193,7 @@ export default function FreelancerSignupForm() {
           — OR —
         </motion.p>
         <motion.div variants={itemVariants} className="text-center mt-2">
-          <Link href="/login/freelancer" className="text-blue-600 hover:underline">
+          <Link href="/login/client" className="text-blue-600 hover:underline">
             Login with an existing account
           </Link>
         </motion.div>

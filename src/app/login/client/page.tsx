@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useDispatch } from "react-redux";
+import { loginSuccessful } from "@/store/userSlice";
 import { motion, Variants } from "framer-motion";
-import { Loader2, Mail, Lock, SmilePlus, UserPlus } from "lucide-react";
+import { Loader2, Mail, Lock, LogIn } from "lucide-react";
 import { toast } from "sonner";
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -16,52 +18,48 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Toaster } from "@/components/ui/sonner";
 
-const signupSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
+const loginSchema = z.object({
   email: z.string().email("Enter a valid email"),
   password: z.string().min(8, "Password must be at least 8 characters"),
 });
 
-type SignupFormValues = z.infer<typeof signupSchema>;
+type LoginFormValues = z.infer<typeof loginSchema>;
 
-export default function FreelancerSignupForm() {
+export default function ClientLoginForm() {
   const { data: session, status: sessionStatus } = useSession();
   const router = useRouter();
+  const dispatch = useDispatch();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<SignupFormValues>({
-    resolver: zodResolver(signupSchema),
-    defaultValues: { username: "", email: "", password: "" },
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "" },
   });
 
   useEffect(() => {
     if (sessionStatus === "authenticated") {
-      router.replace("/");
+      dispatch(loginSuccessful(session?.user));
+      router.replace("/dashboard/client");
     }
-  }, [sessionStatus, router]);
+  }, [sessionStatus, session, dispatch, router]);
 
-  const handleSignup = async (values: SignupFormValues) => {
+  const handleLogin = async (values: LoginFormValues) => {
     setIsSubmitting(true);
-    try {
-      const res = await fetch("/api/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...values, role: "freelancer" }),
-      });
+    const res = await signIn("credentials", {
+      redirect: false,
+      email: values.email,
+      password: values.password,
+      role: "client",
+    });
 
-      if (res.status === 409) {
-        toast.error("Email already registered");
-      } else if (!res.ok) {
-        toast.error("Something went wrong. Please try again.");
-      } else {
-        toast.success("Account created!", { description: "Redirecting to login..." });
-        router.push("/login/freelancer");
-      }
-    } catch (err) {
-      toast.error("Network error", { description: "Please try again later." });
-    } finally {
-      setIsSubmitting(false);
+    if (res?.error) {
+      toast.error("Invalid email or password");
+    } else {
+      toast.success("Login successful!");
+      router.replace("/dashboard/client");
     }
+
+    setIsSubmitting(false);
   };
 
   const containerVariants: Variants = {
@@ -96,36 +94,17 @@ export default function FreelancerSignupForm() {
       <Toaster />
       <motion.div
         variants={itemVariants}
-        className="w-full max-w-md bg-white dark:bg-zinc-900 p-8 rounded-xl shadow-lg border border-gray-200 dark:border-zinc-700"
+        className="w-full max-w-md rounded-xl bg-white dark:bg-zinc-900 p-8 shadow-lg border border-gray-200 dark:border-zinc-700"
       >
         <motion.h2
           variants={itemVariants}
           className="mb-6 text-center text-2xl font-bold text-gray-800 dark:text-white"
         >
-          Register as Freelancer
+          Login as Client
         </motion.h2>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSignup)} className="space-y-5">
-            <motion.div variants={itemVariants}>
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <SmilePlus className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                        <Input placeholder="FreelancerName" {...field} className="pl-10" />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </motion.div>
-
+          <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-5">
             <motion.div variants={itemVariants}>
               <FormField
                 control={form.control}
@@ -136,7 +115,11 @@ export default function FreelancerSignupForm() {
                     <FormControl>
                       <div className="relative">
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                        <Input placeholder="freelancer@example.com" {...field} className="pl-10" />
+                        <Input
+                          placeholder="client@example.com"
+                          {...field}
+                          className="pl-10"
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -155,7 +138,12 @@ export default function FreelancerSignupForm() {
                     <FormControl>
                       <div className="relative">
                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                        <Input type="password" placeholder="********" {...field} className="pl-10" />
+                        <Input
+                          type="password"
+                          placeholder="********"
+                          {...field}
+                          className="pl-10"
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -173,12 +161,12 @@ export default function FreelancerSignupForm() {
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating Account...
+                    Signing In...
                   </>
                 ) : (
                   <>
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    Register
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Sign In
                   </>
                 )}
               </Button>
@@ -193,8 +181,8 @@ export default function FreelancerSignupForm() {
           — OR —
         </motion.p>
         <motion.div variants={itemVariants} className="text-center mt-2">
-          <Link href="/login/freelancer" className="text-blue-600 hover:underline">
-            Login with an existing account
+          <Link href="/signup/client" className="text-blue-600 hover:underline">
+            Register Here
           </Link>
         </motion.div>
       </motion.div>

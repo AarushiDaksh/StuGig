@@ -20,7 +20,7 @@ const userSchema = new Schema(
   },
   {
     timestamps: true,
-    collection: "stugigUsers", 
+    collection: "stugigUsersFreelancer", 
   }
 );
 
