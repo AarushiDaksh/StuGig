@@ -3,6 +3,7 @@
 
 
 // src/next-auth.d.ts or src/types/next-auth.d.ts
+// types/next-auth.d.ts
 import NextAuth from "next-auth";
 
 declare module "next-auth" {
@@ -11,14 +12,19 @@ declare module "next-auth" {
       name?: string | null;
       email?: string | null;
       image?: string | null;
-      role?: string; 
+      role?: string | null;
     };
   }
 
   interface User {
-    role?: string; 
+    role?: string;
+  }
+
+  interface JWT {
+    role?: string;
   }
 }
+
 
 // NOTE: This file should not be edited
 // see https://nextjs.org/docs/app/api-reference/config/typescript for more information.
