@@ -5,12 +5,19 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import { motion, Variants } from "framer-motion";
 import { Loader2, Mail, Lock, SmilePlus, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -36,7 +43,8 @@ export default function FreelancerSignupForm() {
 
   useEffect(() => {
     if (sessionStatus === "authenticated") {
-      router.replace("/");
+      // If user is already authenticated, redirect to appropriate dashboard
+      router.replace("/dashboard/freelancer");
     }
   }, [sessionStatus, router]);
 
@@ -54,8 +62,27 @@ export default function FreelancerSignupForm() {
       } else if (!res.ok) {
         toast.error("Something went wrong. Please try again.");
       } else {
-        toast.success("Account created!", { description: "Redirecting to login..." });
-        router.push("/login/freelancer");
+        toast.success("Account created!", {
+          description: "Logging you in...",
+        });
+
+        // Automatically log in the user after successful signup
+        const signInResult = await signIn("credentials", {
+          email: values.email,
+          password: values.password,
+          role: "freelancer",
+          redirect: false,
+        });
+
+        if (signInResult?.error) {
+          toast.error("Login failed", {
+            description: "Please log in manually.",
+          });
+          router.push("/login/freelancer");
+        } else {
+          // Successfully logged in, redirect to profile creation
+          router.push("/profile/create");
+        }
       }
     } catch (err) {
       toast.error("Network error", { description: "Please try again later." });
@@ -84,7 +111,8 @@ export default function FreelancerSignupForm() {
     },
   };
 
-  if (sessionStatus === "loading") return <h1 className="text-center mt-20">Loading...</h1>;
+  if (sessionStatus === "loading")
+    return <h1 className="text-center mt-20">Loading...</h1>;
 
   return (
     <motion.div
@@ -106,7 +134,10 @@ export default function FreelancerSignupForm() {
         </motion.h2>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSignup)} className="space-y-5">
+          <form
+            onSubmit={form.handleSubmit(handleSignup)}
+            className="space-y-5"
+          >
             <motion.div variants={itemVariants}>
               <FormField
                 control={form.control}
@@ -117,7 +148,11 @@ export default function FreelancerSignupForm() {
                     <FormControl>
                       <div className="relative">
                         <SmilePlus className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                        <Input placeholder="FreelancerName" {...field} className="pl-10" />
+                        <Input
+                          placeholder="FreelancerName"
+                          {...field}
+                          className="pl-10"
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -136,7 +171,11 @@ export default function FreelancerSignupForm() {
                     <FormControl>
                       <div className="relative">
                         <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                        <Input placeholder="freelancer@example.com" {...field} className="pl-10" />
+                        <Input
+                          placeholder="freelancer@example.com"
+                          {...field}
+                          className="pl-10"
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -155,7 +194,12 @@ export default function FreelancerSignupForm() {
                     <FormControl>
                       <div className="relative">
                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                        <Input type="password" placeholder="********" {...field} className="pl-10" />
+                        <Input
+                          type="password"
+                          placeholder="********"
+                          {...field}
+                          className="pl-10"
+                        />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -193,7 +237,10 @@ export default function FreelancerSignupForm() {
           — OR —
         </motion.p>
         <motion.div variants={itemVariants} className="text-center mt-2">
-          <Link href="/login/freelancer" className="text-blue-600 hover:underline">
+          <Link
+            href="/login/freelancer"
+            className="text-blue-600 hover:underline"
+          >
             Login with an existing account
           </Link>
         </motion.div>
