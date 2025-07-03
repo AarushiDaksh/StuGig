@@ -38,58 +38,73 @@ export default function FreelancerDashboard() {
   }, [user?.id]);
 
   return (
-    <main className="min-h-screen bg-[#0e0e10] text-white py-12 px-6">
+    <main className="min-h-screen bg-white text-black py-6 px-4 font-sans">
       <section className="max-w-6xl mx-auto">
-        <header className="mb-10 text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight">Freelancer Dashboard</h1>
-          <p className="text-gray-400 mt-2">
-            Hello <span className="font-semibold">{user?.name || "Freelancer"}</span> — Manage your gigs efficiently.
+        <header className="mb-8">
+          <h1 className="text-2xl mb-1 font-medium">Dashboard</h1>
+          <p className="text-gray-600 text-sm">
+            Welcome back, <span>{user?.name || "Freelancer"}</span> 👋
           </p>
         </header>
 
-        {/* Gig Upload */}
-        <section className="bg-[#1c1c1e] rounded-xl p-6 mb-12 shadow-lg">
-          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-            <Briefcase size={22} /> Upload New Gig
-          </h2>
-          <GigUploadForm />
-        </section>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            {/* Analytics */}
+            <section className="bg-gray-100 rounded-lg p-4 mb-6">
+              <h2 className="text-base text-gray-700 mb-3">Upload New Gig</h2>
+              <GigUploadForm />
+            </section>
 
-        {/* Gig List */}
-        <section>
-          <h2 className="text-2xl font-semibold mb-6">Your Posted Gigs</h2>
+            {/* Gig List */}
+            <section>
+              <h2 className="text-base text-gray-700 mb-4">Your Posted Gigs</h2>
+              {loading ? (
+                <p className="text-gray-500 text-sm">Loading gigs...</p>
+              ) : gigs.length === 0 ? (
+                <p className="text-gray-400 text-sm">You haven't posted any gigs yet.</p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {gigs.map((gig) => (
+                    <div
+                      key={gig._id}
+                      className="bg-white border border-gray-200 rounded-md p-4 hover:shadow-sm transition"
+                    >
+                      <h3 className="text-base font-normal text-black mb-1">{gig.title}</h3>
+                      <p className="text-sm text-gray-700 line-clamp-3">{gig.description}</p>
+                      <div className="flex justify-between items-center text-xs text-gray-500 mt-3">
+                        <span>₹{gig.budget}</span>
+                        <span>{new Date(gig.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          </div>
 
-          {loading ? (
-            <p className="text-gray-400">Loading gigs...</p>
-          ) : gigs.length === 0 ? (
-            <p className="text-gray-500">You haven't posted any gigs yet.</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {gigs.map((gig) => (
-                <article
-                  key={gig._id}
-                  className="bg-[#1a1a1d] p-5 rounded-xl shadow border border-gray-800 hover:border-blue-500 transition"
-                >
-                  <h3 className="text-xl font-bold text-white">{gig.title}</h3>
-                  <p className="text-gray-300 mt-1 line-clamp-3">{gig.description}</p>
-                  <div className="mt-3 flex items-center justify-between text-sm text-gray-400">
-                    <span>Budget: <span className="text-green-400 font-medium">₹{gig.budget}</span></span>
-                    <span>{new Date(gig.createdAt).toLocaleDateString()}</span>
-                  </div>
-                </article>
-              ))}
+          {/* Sidebar */}
+          <aside className="bg-gray-100 rounded-lg p-4 text-center">
+            <div className="mb-4">
+              <img
+                src="/avatar-placeholder.png"
+                alt="User Avatar"
+                className="w-16 h-16 mx-auto rounded-full mb-2"
+              />
+              <p className="text-sm font-medium text-black">{user?.name || "John Doe"}</p>
+              <p className="text-xs text-gray-500">Your Profile</p>
             </div>
-          )}
-        </section>
 
-        {/* Logout Button */}
-        <div className="mt-12 text-center">
-          <button
-            onClick={() => signOut({ callbackUrl: "/" })}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white font-medium"
-          >
-            <LogOut size={18} /> Logout
-          </button>
+            <div className="mt-6">
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="w-full bg-gray-200 text-sm text-gray-700 py-2 rounded-md hover:bg-gray-300 transition"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <LogOut size={16} /> Logout
+                </div>
+              </button>
+            </div>
+          </aside>
         </div>
       </section>
     </main>
