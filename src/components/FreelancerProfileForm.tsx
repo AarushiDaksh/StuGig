@@ -719,3 +719,4 @@ export default function FreelancerProfileForm({
     </div>
   );
 }
+
