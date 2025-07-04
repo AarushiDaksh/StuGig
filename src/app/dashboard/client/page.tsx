@@ -1,77 +1,128 @@
-"use client";
+// src/app/dashboard/client/page.tsx
+'use client'; // This is a Client Component
 
-import { signOut, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from 'react';
+import useClientDashboardData from '@/hooks/useClientDashboardData'; 
+import LoadingSpinner from '@/components/LoadingSpinner'; 
+import ClientDashboardTabs from './_components/ClientDashboardTabs';
+import JobCard from './_components/JobCard';
+import BidCard from './_components/BidCard';
+import HiredFreelancerCard from './_components/HiredFreelancerCard';
+import PaymentHistoryTable from './_components/PaymentHistoryTable';
+import GivenRatingsDisplay from './_components/GivenRatingsDisplay';
+import { Job, Bid, HiredFreelancer, PaymentTransaction, Review } from '@/types/clientDashboard'; 
 
-interface Gig {
-  _id: string;
-  title: string;
-  description: string;
-  budget: number;
-  freelancerId?: {
-    _id?: string;
-    username?: string;
-    email?: string;
-  } | null;
-}
+type Tab = 'jobs' | 'bids' | 'hired' | 'payments' | 'ratings';
 
-export default function ClientDashboard() {
-  const { data: session } = useSession();
-  const [gigs, setGigs] = useState<Gig[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function ClientDashboardPage() {
+  const { data, loading, error } = useClientDashboardData();
+  const [activeTab, setActiveTab] = useState<Tab>('jobs'); 
 
-  useEffect(() => {
-    const fetchGigs = async () => {
-      try {
-        const res = await fetch("/api/gigs/all");
-        const data = await res.json();
-        setGigs(data.gigs || []);
-      } catch (error) {
-        console.error("Failed to fetch gigs:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
-    fetchGigs();
-  }, []);
+  if (error) {
+    return <div className="text-red-500 text-center py-8 text-lg font-semibold">Error: {error}</div>;
+  }
+
+  
+  if (!data) {
+    return <div className="text-center py-8 text-gray-600">No dashboard data available.</div>;
+  }
 
   return (
-    <main className="min-h-screen bg-[#f9fafb] px-6 py-12">
-      <div className="max-w-6xl mx-auto text-center">
-        <h1 className="text-4xl font-bold text-gray-900">Client Dashboard</h1>
-        <p className="text-gray-500 mt-2 mb-10 text-lg">Browse and review freelance gigs</p>
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <h1 className="text-4xl font-extrabold text-gray-900 mb-8">Your Client Dashboard</h1>
 
-        {loading ? (
-          <p className="text-gray-400 text-sm">Loading gigs...</p>
-        ) : gigs.length === 0 ? (
-          <p className="text-gray-400">No gigs available at the moment.</p>
-        ) : (
-          <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 text-left">
-            {gigs.map((gig) => (
-              <article
-                key={gig._id}
-                className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition"
-              >
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">{gig.title}</h2>
-                <p className="text-gray-600 mb-3 line-clamp-3">{gig.description}</p>
-                <p className="text-sm text-green-600 font-medium mb-2">Budget: ₹{gig.budget}</p>
-                <p className="text-sm text-gray-500">
-                  By: <span className="font-medium">{gig.freelancerId?.username ?? "Unknown"}</span>{" "}
-                  ({gig.freelancerId?.email ?? "No email"})
-                </p>
-              </article>
-            ))}
-          </section>
+      <ClientDashboardTabs activeTab={activeTab} setActiveTab={setActiveTab} />
+
+      <div className="mt-8 bg-white p-6 rounded-lg shadow-xl">
+        {activeTab === 'jobs' && (
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Your Posted Jobs</h2>
+            {data.postedJobs.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {data.postedJobs.map((job) => (
+                  <JobCard key={job._id} job={job} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-600 text-center py-4">
+                You haven't posted any jobs yet. <a href="/jobs/new" className="text-indigo-600 hover:underline font-medium">Post a new job now!</a>
+              </p>
+            )}
+          </div>
         )}
 
-        <button
-          onClick={() => signOut({ callbackUrl: "/" })}
-          className="mt-12 inline-block px-6 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition"
-        >
-          Logout
-        </button>
+        {activeTab === 'bids' && (
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Bids Received</h2>
+            {data.bidsReceived.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {data.bidsReceived.map((bid) => (
+                  <BidCard key={bid._id} bid={bid} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-600 text-center py-4">
+                No bids have been received for your jobs yet.
+              </p>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'hired' && (
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Hired Freelancers</h2>
+            {data.hiredFreelancers.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {data.hiredFreelancers.map((hired) => (
+                  <HiredFreelancerCard key={hired._id} hired={hired} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-600 text-center py-4">
+                You haven't hired any freelancers yet.
+              </p>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'payments' && (
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Payment History</h2>
+            {data.paymentHistory.length > 0 ? (
+              <PaymentHistoryTable transactions={data.paymentHistory} />
+            ) : (
+              <p className="text-gray-600 text-center py-4">
+                No payment history available.
+              </p>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'ratings' && (
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Your Given Ratings</h2>
+            {data.givenRatings.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {data.givenRatings.map((rating) => (
+                  <GivenRatingsDisplay key={rating._id} rating={rating} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-600 text-center py-4">
+                You haven't given any ratings yet.
+              </p>
+            )}
+          </div>
+        )}
       </div>
-    </main>
+    </div>
   );
 }
