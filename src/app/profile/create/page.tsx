@@ -75,4 +75,7 @@ export default function CreateProfilePage() {
       </div>
     </div>
   );
+
 }
+
+
