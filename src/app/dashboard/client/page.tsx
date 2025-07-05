@@ -1,77 +1,91 @@
+// app/dashboard/client/page.tsx
 "use client";
 
-import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
+import ClientJobList from "@/components/ClientJobList";
+import ClientBidsPanel from "@/components/ClientBidsPanel";
+import HiredFreelancers from "@/components/HiredFreelancers";
+import PaymentHistory from "@/components/PaymentHistory";
+import RatingsGiven from "@/components/RatingGiven";
+import { LogOut } from "lucide-react";
+import GigUploadForm from "@/components/GigUploadForm";
 
-interface Gig {
-  _id: string;
-  title: string;
-  description: string;
-  budget: number;
-  freelancerId?: {
-    _id?: string;
-    username?: string;
-    email?: string;
-  } | null;
-}
+const TABS = ["Jobs", "Bids", "Hired", "Payments", "Ratings"];
 
 export default function ClientDashboard() {
-  const { data: session } = useSession();
-  const [gigs, setGigs] = useState<Gig[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: session, status } = useSession();
+  const [activeTab, setActiveTab] = useState("Jobs");
+  const router = useRouter();
 
   useEffect(() => {
-    const fetchGigs = async () => {
-      try {
-        const res = await fetch("/api/gigs/all");
-        const data = await res.json();
-        setGigs(data.gigs || []);
-      } catch (error) {
-        console.error("Failed to fetch gigs:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    if (status === "loading") return;
+    if (status === "unauthenticated") {
+      router.push("/login/client");
+      return;
+    }
+    if (session?.user?.role !== "client") {
+      router.push("/login/client");
+      return;
+    }
+  }, [session, status, router]);
 
-    fetchGigs();
-  }, []);
+  if (status === "loading") {
+    return (
+      <main className="min-h-screen bg-gray-100 text-gray-800 py-12 px-6">
+        <section className="max-w-6xl mx-auto">
+          <div className="text-center">
+            <h1 className="text-4xl font-extrabold tracking-tight mb-4">
+              Loading Dashboard...
+            </h1>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black mx-auto"></div>
+          </div>
+        </section>
+      </main>
+    );
+  }
 
   return (
-    <main className="min-h-screen bg-[#f9fafb] px-6 py-12">
-      <div className="max-w-6xl mx-auto text-center">
-        <h1 className="text-4xl font-bold text-gray-900">Client Dashboard</h1>
-        <p className="text-gray-500 mt-2 mb-10 text-lg">Browse and review freelance gigs</p>
-
-        {loading ? (
-          <p className="text-gray-400 text-sm">Loading gigs...</p>
-        ) : gigs.length === 0 ? (
-          <p className="text-gray-400">No gigs available at the moment.</p>
-        ) : (
-          <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 text-left">
-            {gigs.map((gig) => (
-              <article
-                key={gig._id}
-                className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-md transition"
-              >
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">{gig.title}</h2>
-                <p className="text-gray-600 mb-3 line-clamp-3">{gig.description}</p>
-                <p className="text-sm text-green-600 font-medium mb-2">Budget: ₹{gig.budget}</p>
-                <p className="text-sm text-gray-500">
-                  By: <span className="font-medium">{gig.freelancerId?.username ?? "Unknown"}</span>{" "}
-                  ({gig.freelancerId?.email ?? "No email"})
-                </p>
-              </article>
-            ))}
-          </section>
+    <div className="min-h-screen px-4 py-8 bg-gray-100 text-gray-800">
+      <h1 className="text-2xl font-bold mb-6">Client Dashboard</h1>
+      <div className="flex gap-4 mb-6">
+        {TABS.map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-4 py-2 rounded-md font-medium ${
+              activeTab === tab ? "bg-black text-white" : "bg-white border"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+        {activeTab === "Jobs" && (
+          <div className="mb-8">
+            <GigUploadForm />
+            <div className="mt-10">
+              <ClientJobList />
+            </div>
+          </div>
         )}
 
+      <div>
+        {activeTab === "Bids" && <ClientBidsPanel />}
+        {activeTab === "Hired" && <HiredFreelancers />}
+        {activeTab === "Payments" && <PaymentHistory />}
+        {activeTab === "Ratings" && <RatingsGiven />}
+      </div>
+
+      <div className="mt-12 text-center">
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
-          className="mt-12 inline-block px-6 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 transition"
+          className="inline-flex items-center gap-2 px-5 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white font-medium"
         >
-          Logout
+          <LogOut size={18} /> Logout
         </button>
       </div>
-    </main>
+    </div>
   );
 }

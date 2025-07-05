@@ -2,22 +2,27 @@ import { NextRequest, NextResponse } from "next/server";
 import connect from "@/utlis/db";
 import Gig from "@/models/gigs";
 
-export async function GET(req: NextRequest) {
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { freelancerId: string } }
+) {
   await connect();
 
-  const url = new URL(req.url);
-  const freelancerId = url.searchParams.get("freelancerId");
+  const { freelancerId } = params;
 
   if (!freelancerId) {
-    return NextResponse.json({ error: "Missing freelancerId" }, { status: 400 });
+    return NextResponse.json(
+      { success: false, error: "Freelancer ID is required" },
+      { status: 400 }
+    );
   }
 
   try {
-    const gigs = await Gig.find({ "freelancerId._id": freelancerId });
-    return NextResponse.json({ gigs }, { status: 200 });
-  } catch (error) {
+    const gigs = await Gig.find({ freelancerId }); // Only gigs linked to this freelancer
+    return NextResponse.json({ success: true, gigs }, { status: 200 });
+  } catch (err) {
     return NextResponse.json(
-      { message: "Failed to fetch gigs", error },
+      { success: false, error: "Failed to fetch gigs" },
       { status: 500 }
     );
   }

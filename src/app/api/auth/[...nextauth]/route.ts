@@ -1,15 +1,14 @@
-import NextAuth from "next-auth/next"; 
+// app/api/auth/[...nextauth]/route.ts
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { type User, type Session } from "next-auth";
 import { type JWT } from "next-auth/jwt";
 
-
 import UserClient from "@/models/UserClient";
 import UserFreelancer from "@/models/UserFreelancer";
 import connect from "@/utlis/db";
 import { NextAuthOptions } from "next-auth";
-
 
 const authOptions: NextAuthOptions = {
   providers: [
@@ -74,7 +73,6 @@ const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
-
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

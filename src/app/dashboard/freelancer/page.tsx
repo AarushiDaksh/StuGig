@@ -74,16 +74,17 @@ export default function FreelancerDashboard() {
     checkProfileStatus();
   }, [session?.user?.id, router]);
 
-  useEffect(() => {
-    const fetchGigs = async () => {
-      if (!session?.user?.id) return;
-      const res = await fetch(`/api/gigs/freelancer/${session.user.id}`);
-      const data = await res.json();
-      setGigs(data.gigs || []);
-      setLoading(false);
-    };
-    fetchGigs();
-  }, [session?.user?.id]);
+useEffect(() => {
+  const fetchGigs = async () => {
+    const res = await fetch(`/api/gigs/freelancer/${session.user.id}`);
+
+    const data = await res.json();
+    setGigs(data.gigs || []);
+    setLoading(false);
+  };
+  fetchGigs();
+}, []);
+
 
   // Show loading state while checking session or profile
   if (status === "loading" || profileLoading) {
@@ -178,46 +179,34 @@ export default function FreelancerDashboard() {
         </section>
 
         {/* Gig Upload */}
-        {/* <section className="bg-[#1c1c1e] rounded-xl p-6 mb-12 shadow-lg">
-          <h2 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-            <Briefcase size={22} /> Upload New Gig
-          </h2>
-          <GigUploadForm />
-        </section> */}
+                  <section>
+            <h2 className="text-2xl font-semibold mb-6">Available Gigs</h2>
 
-        {/* Gig List */}
-        {/* <section>
-          <h2 className="text-2xl font-semibold mb-6">Your Posted Gigs</h2>
-
-          {loading ? (
-            <p className="text-gray-400">Loading gigs...</p>
-          ) : gigs.length === 0 ? (
-            <p className="text-gray-500">You haven't posted any gigs yet.</p>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {gigs.map((gig) => (
-                <article
-                  key={gig._id}
-                  className="bg-[#1a1a1d] p-5 rounded-xl shadow border border-gray-800 hover:border-blue-500 transition"
-                >
-                  <h3 className="text-xl font-bold text-white">{gig.title}</h3>
-                  <p className="text-gray-300 mt-1 line-clamp-3">
-                    {gig.description}
-                  </p>
-                  <div className="mt-3 flex items-center justify-between text-sm text-gray-400">
-                    <span>
-                      Budget:{" "}
-                      <span className="text-green-400 font-medium">
-                        ₹{gig.budget}
+            {loading ? (
+              <p className="text-gray-400">Loading gigs...</p>
+            ) : gigs.length === 0 ? (
+              <p className="text-gray-500">No gigs available at the moment.</p>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {gigs.map((gig) => (
+                  <article
+                    key={gig._id}
+                    className="bg-[#1a1a1d] p-5 rounded-xl shadow border border-gray-800 hover:border-blue-500 transition"
+                  >
+                    <h3 className="text-xl font-bold text-white">{gig.title}</h3>
+                    <p className="text-gray-300 mt-1 line-clamp-3">{gig.description}</p>
+                    <div className="mt-3 flex items-center justify-between text-sm text-gray-400">
+                      <span>
+                        Budget:{" "}
+                        <span className="text-green-400 font-medium">₹{gig.budget}</span>
                       </span>
-                    </span>
-                    <span>{new Date(gig.createdAt).toLocaleDateString()}</span>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
-        </section> */}
+                      <span>{new Date(gig.createdAt).toLocaleDateString()}</span>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+          </section>
 
         {/* Logout Button */}
         <div className="mt-12 text-center">
