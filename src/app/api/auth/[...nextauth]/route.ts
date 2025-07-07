@@ -1,4 +1,3 @@
-// app/api/auth/[...nextauth]/route.ts
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
@@ -49,7 +48,7 @@ const authOptions: NextAuthOptions = {
           id: user._id.toString(),
           name: user.username || user.name || "User",
           email: user.email,
-          role: credentials.role,
+          role: user.role || credentials.role, // Ensure role is attached from DB
         };
       },
     }),
@@ -61,7 +60,7 @@ const authOptions: NextAuthOptions = {
     async jwt({ token, user }: { token: JWT; user?: User }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role;
+        token.role = (user as any).role; // cast because role isn't part of User type by default
       }
       return token;
     },
@@ -70,6 +69,9 @@ const authOptions: NextAuthOptions = {
       session.user.role = token.role as string;
       return session;
     },
+  },
+  pages: {
+    signIn: "/login", //change to your custom login path
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

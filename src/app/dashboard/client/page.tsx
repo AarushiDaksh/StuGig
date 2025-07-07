@@ -9,25 +9,22 @@ import ClientBidsPanel from "@/components/ClientBidsPanel";
 import HiredFreelancers from "@/components/HiredFreelancers";
 import PaymentHistory from "@/components/PaymentHistory";
 import RatingsGiven from "@/components/RatingGiven";
-import { LogOut } from "lucide-react";
 import GigUploadForm from "@/components/GigUploadForm";
-
-const TABS = ["Jobs", "Bids", "Hired", "Payments", "Ratings"];
+import { LogOut, Briefcase, User, MessageSquare } from "lucide-react";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import { useRouter as useNextRouter } from "next/navigation";
 
 export default function ClientDashboard() {
   const { data: session, status } = useSession();
+  const user = useSelector((state: RootState) => state.user.currentUser);
   const [activeTab, setActiveTab] = useState("Jobs");
   const router = useRouter();
 
   useEffect(() => {
     if (status === "loading") return;
-    if (status === "unauthenticated") {
+    if (status === "unauthenticated" || session?.user?.role !== "client") {
       router.push("/login/client");
-      return;
-    }
-    if (session?.user?.role !== "client") {
-      router.push("/login/client");
-      return;
     }
   }, [session, status, router]);
 
@@ -46,46 +43,97 @@ export default function ClientDashboard() {
     );
   }
 
+  const receiverId = user?.id; // own ID for testing
+
   return (
-    <div className="min-h-screen px-4 py-8 bg-gray-100 text-gray-800">
-      <h1 className="text-2xl font-bold mb-6">Client Dashboard</h1>
-      <div className="flex gap-4 mb-6">
-        {TABS.map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 rounded-md font-medium ${
-              activeTab === tab ? "bg-black text-white" : "bg-white border"
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+        <main className="flex min-h-screen bg-gray-50 text-black">
+          <aside className="w-20 bg-white border-r min-h-screen flex flex-col items-center py-8 gap-6">
+      <button onClick={() => setActiveTab("Jobs")} title="Gigs">💼</button>
+      <button onClick={() => setActiveTab("Bids")} title="Bids">📥</button>
+      <button onClick={() => setActiveTab("Ratings")} title="Ratings">⭐</button>
+
+      {/* <button onClick={() => router.push(`/chat`)} title="Chat Room">
+        💬
+      </button> */}
+
+    </aside>
+
+
+      <section className="flex-1 p-8">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-xl font-bold text-blue-800">CLIENT</h1>
+          <div className="flex items-center gap-3">
+            <p className="text-sm text-gray-500">Wallet</p>
+            <p className="text-lg font-bold">₱0.00</p>
+          </div>
+        </div>
+
         {activeTab === "Jobs" && (
-          <div className="mb-8">
+          <>
             <GigUploadForm />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+              <div className="bg-white shadow rounded-lg p-6 border">
+                <p className="text-sm text-gray-500">Ongoing Gigs</p>
+                <p className="text-2xl font-bold mt-2">No ongoing gigs</p>
+              </div>
+              <div className="bg-white shadow rounded-lg p-6 border">
+                <p className="text-sm text-gray-500">Total Completed Gigs</p>
+                <p className="text-2xl font-bold mt-2">0</p>
+                <a className="text-sm text-blue-500 mt-1 inline-block" href="#">View All →</a>
+              </div>
+              <div className="bg-white shadow rounded-lg p-6 border">
+                <p className="text-sm text-gray-500">Wallet Balance</p>
+                <p className="text-2xl font-bold mt-2">₱0.00</p>
+                <a className="text-sm text-blue-500 mt-1 inline-block" href="#">View History →</a>
+              </div>
+            </div>
+
             <div className="mt-10">
               <ClientJobList />
             </div>
-          </div>
+
+            <div className="mt-10 bg-white shadow rounded-lg p-6 border">
+              <h2 className="text-lg font-semibold mb-4">Transaction History</h2>
+              <table className="w-full text-sm text-left text-gray-600">
+                <thead className="bg-gray-50 border-b">
+                  <tr>
+                    <th className="px-4 py-2">Date</th>
+                    <th className="px-4 py-2">Description</th>
+                    <th className="px-4 py-2">Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colSpan={3} className="text-center py-6 text-gray-400">No results.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
 
-      <div>
         {activeTab === "Bids" && <ClientBidsPanel />}
         {activeTab === "Hired" && <HiredFreelancers />}
         {activeTab === "Payments" && <PaymentHistory />}
         {activeTab === "Ratings" && <RatingsGiven />}
-      </div>
+        {activeTab === "Chat" && (
+          <section className="mt-10">
+            <h2 className="text-2xl font-semibold mb-4">Chat</h2>
+            {receiverId && (
+              <p className="text-sm text-gray-600">Chat with your freelancers in a dedicated chat room.</p>
+            )}
+          </section>
+        )}
 
-      <div className="mt-12 text-center">
-        <button
-          onClick={() => signOut({ callbackUrl: "/" })}
-          className="inline-flex items-center gap-2 px-5 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white font-medium"
-        >
-          <LogOut size={18} /> Logout
-        </button>
-      </div>
-    </div>
+        <div className="text-center mt-10">
+          <button
+            onClick={() => signOut({ callbackUrl: "/" })}
+            className="inline-flex items-center gap-2 px-6 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white font-medium"
+          >
+            <LogOut size={18} /> Logout
+          </button>
+        </div>
+      </section>
+    </main>
   );
 }
