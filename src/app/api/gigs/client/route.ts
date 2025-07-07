@@ -1,30 +1,24 @@
+// src/app/api/gigs/client/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/authOptions";
 import connect from "@/utlis/db";
 import Gig from "@/models/gigs";
-import UserClient from "@/models/UserClient";
+import { authOptions } from "@/lib/authOptions";
 
 export async function GET(req: NextRequest) {
+  await connect();
+
+  const session = await getServerSession(authOptions);
+  const clientId = session?.user?.id;
+
+  if (!clientId) {
+    return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
-    await connect();
-    const session = await getServerSession(authOptions);
-
-    if (!session || session.user.role !== "client") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const client = await UserClient.findOne({ email: session.user.email });
-
-    if (!client) {
-      return NextResponse.json({ error: "Client not found" }, { status: 404 });
-    }
-
-    const gigs = await Gig.find({ clientId: client._id }).populate("freelancerId", "username email");
-
-    return NextResponse.json({ gigs });
+    const gigs = await Gig.find({ clientId }).sort({ createdAt: -1 });
+    return NextResponse.json({ success: true, gigs });
   } catch (error) {
-    console.error("Error fetching client gigs:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ success: false, error: "Failed to fetch gigs" }, { status: 500 });
   }
 }

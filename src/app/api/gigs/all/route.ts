@@ -1,59 +1,28 @@
-import { NextResponse } from "next/server";
+// app/api/gigs/all/route.ts
+import { NextRequest, NextResponse } from "next/server";
 import connect from "@/utlis/db";
 import Gig from "@/models/gigs";
+import Bid from "@/models/Bid";
 
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   await connect();
 
-  const { searchParams } = new URL(req.url);
+  const freelancerId = req.nextUrl.searchParams.get("freelancerId");
 
-  // 🧠 Extract query params
-  const search = searchParams.get("search") || "";
-  const category = searchParams.get("category") || "";
-  const skills = searchParams.getAll("skills"); // multiple ?skills=one&skills=two
-  const minBudget = parseInt(searchParams.get("minBudget") || "0");
-  const maxBudget = parseInt(searchParams.get("maxBudget") || "1000000");
-  const sortBy = searchParams.get("sortBy") || "createdAt";
-  const sortOrder = searchParams.get("sortOrder") === "asc" ? 1 : -1;
-  const page = parseInt(searchParams.get("page") || "1");
-  const limit = parseInt(searchParams.get("limit") || "10");
+  const gigs = await Gig.find().lean();
 
-  // 🔍 Build filter
-  const filter: any = {
-    budget: { $gte: minBudget, $lte: maxBudget },
-  };
+  let appliedGigs: Set<string> = new Set();
 
-  if (search) {
-    filter.$or = [
-      { title: { $regex: search, $options: "i" } },
-      { description: { $regex: search, $options: "i" } },
-    ];
+  if (freelancerId) {
+    const bids = await Bid.find({ freelancerId });
+    appliedGigs = new Set(bids.map((bid) => bid.gigId.toString()));
   }
 
-  if (category) {
-    filter.category = category;
-  }
+    const gigsWithAppliedFlag = gigs.map((gig) => ({
+      ...gig,
+      applied: appliedGigs.has(String(gig._id)),
+    }));
 
-  if (skills.length > 0) {
-    filter.skills = { $all: skills }; // must match all
-  }
 
-  try {
-    const gigs = await Gig.find(filter)
-      .sort({ [sortBy]: sortOrder })
-      .skip((page - 1) * limit)
-      .limit(limit);
-
-    const total = await Gig.countDocuments(filter);
-
-    return NextResponse.json({
-      gigs,
-      total,
-      page,
-      totalPages: Math.ceil(total / limit),
-    });
-  } catch (err) {
-    const error = err as Error;
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  return NextResponse.json({ success: true, gigs: gigsWithAppliedFlag });
 }
