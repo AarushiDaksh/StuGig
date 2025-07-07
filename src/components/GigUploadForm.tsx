@@ -1,82 +1,41 @@
 "use client";
 import { useState } from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store"; 
 
 export default function GigUploadForm() {
-  const freelancerId = useSelector(
-    (state: RootState) => state.user.currentUser?.id
-  );
+  const [form, setForm] = useState({ title: "", description: "", budget: "" });
+  const [loading, setLoading] = useState(false);
 
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    budget: "",
-  });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!freelancerId) {
-      alert("Freelancer ID missing. Please re-login.");
-      return;
-    }
-
-    const payload = {
-      ...form,
-      budget: Number(form.budget),
-      freelancerId,
-    };
-
-    console.log("📤 Submitting:", payload);
-
-    const res = await fetch("/api/gigs/upload", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const data = await res.json();
-    if (data.success) {
-      alert("✅ Gig uploaded!");
+    setLoading(true);
+    try {
+      const res = await fetch("/api/gigs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, budget: Number(form.budget) })
+      });
+      if (!res.ok) throw new Error("Failed to create gig");
+      alert("Gig created!");
       setForm({ title: "", description: "", budget: "" });
-    } else {
-      alert("❌ Error: " + data.error);
+    } catch (err) {
+      alert("Error: " + err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 w-full max-w-md">
-      <input
-        type="text"
-        placeholder="Title"
-        value={form.title}
-        onChange={(e) => setForm({ ...form, title: e.target.value })}
-        className="w-full p-2 rounded border border-gray-300"
-        required
-      />
-      <textarea
-        placeholder="Description"
-        value={form.description}
-        onChange={(e) => setForm({ ...form, description: e.target.value })}
-        className="w-full p-2 rounded border border-gray-300"
-        required
-      />
-      <input
-        type="number"
-        placeholder="Budget"
-        value={form.budget}
-        onChange={(e) => setForm({ ...form, budget: e.target.value })}
-        className="w-full p-2 rounded border border-gray-300"
-        required
-      />
-      <button
-        type="submit"
-        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-      >
-        Upload Gig
+    <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow space-y-4">
+      <h2 className="text-lg font-semibold">Post a Gig</h2>
+      <input name="title" value={form.title} onChange={handleChange} placeholder="Title" className="w-full border p-2 rounded" required />
+      <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" className="w-full border p-2 rounded" rows={4} required />
+      <input type="number" name="budget" value={form.budget} onChange={handleChange} placeholder="Budget (₱)" className="w-full border p-2 rounded" required />
+      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded" disabled={loading}>
+        {loading ? "Uploading..." : "Upload Gig"}
       </button>
     </form>
   );

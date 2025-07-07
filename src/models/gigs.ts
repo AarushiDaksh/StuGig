@@ -1,25 +1,12 @@
 import mongoose from "mongoose";
-import "@/models/UserFreelancer"; // ensures model is registered
 
-const GigSchema = new mongoose.Schema(
-  {
-    title: String,
-    description: String,
-    budget: Number,
-    freelancerId: {
-      //type: mongoose.Schema.Types.ObjectId,
-      type: String,
-      ref: "UserStugig",
-      required: true,
-    },
-    category: String,
-    skills: [String],
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-  },
-  { timestamps: true }
-);
+const GigSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  budget: { type: Number, required: true },
+  clientId: { type: mongoose.Schema.Types.ObjectId, ref: "UserClient", required: true },
+  freelancerId: { type: mongoose.Schema.Types.ObjectId, ref: "UserFreelancer", default: null },
+  deadline: { type: Date },
+}, { timestamps: true });
 
-export default mongoose.models.Gig || mongoose.model("Gig", GigSchema, "gigs");
+export default mongoose.models.Gig || mongoose.model("Gig", GigSchema);

@@ -1,15 +1,13 @@
-import NextAuth from "next-auth/next"; 
+import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { type User, type Session } from "next-auth";
 import { type JWT } from "next-auth/jwt";
 
-
 import UserClient from "@/models/UserClient";
 import UserFreelancer from "@/models/UserFreelancer";
 import connect from "@/utlis/db";
 import { NextAuthOptions } from "next-auth";
-
 
 const authOptions: NextAuthOptions = {
   providers: [
@@ -50,7 +48,7 @@ const authOptions: NextAuthOptions = {
           id: user._id.toString(),
           name: user.username || user.name || "User",
           email: user.email,
-          role: credentials.role,
+          role: user.role || credentials.role, // Ensure role is attached from DB
         };
       },
     }),
@@ -62,7 +60,7 @@ const authOptions: NextAuthOptions = {
     async jwt({ token, user }: { token: JWT; user?: User }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role;
+        token.role = (user as any).role; // cast because role isn't part of User type by default
       }
       return token;
     },
@@ -72,9 +70,11 @@ const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  pages: {
+    signIn: "/login", //change to your custom login path
+  },
   secret: process.env.NEXTAUTH_SECRET,
 };
-
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };

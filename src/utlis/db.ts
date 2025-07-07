@@ -10,9 +10,9 @@ const connect = async () => {
   if (mongoose.connections[0].readyState) return;
 
   try {
-    await mongoose.connect(mongoUrl,
-      { dbName: "StuGig", }
-    ); 
+    await mongoose.connect(mongoUrl, {
+      dbName: "StuGig",
+    });
     console.log("MongoDB connected successfully.");
   } catch (error) {
     console.error("MongoDB connection error:", error);

@@ -1,4 +1,3 @@
-// app/api/auth/signup/route.ts
 import connect from "@/utlis/db";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
@@ -11,13 +10,6 @@ export const POST = async (request: Request) => {
 
     if (!username || !email || !password || !role) {
       return new NextResponse("Missing required fields", { status: 400 });
-    }
-    if (!["freelancer", "client"].includes(role)) {
-      return new NextResponse("Invalid role", { status: 400 });
-    }
-
-    if (!["freelancer", "client"].includes(role)) {
-      return new NextResponse("Invalid role", { status: 400 });
     }
 
     if (!["freelancer", "client"].includes(role)) {

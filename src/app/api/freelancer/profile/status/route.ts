@@ -4,7 +4,6 @@ import connect from "@/utlis/db";
 import UserFreelancer from "@/models/UserFreelancer";
 import { authOptions } from "@/lib/authOptions";
 
-// GET - Check if freelancer profile is complete
 export async function GET(req: NextRequest) {
   try {
     await connect();
@@ -29,15 +28,14 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // Check if profile is complete based on required fields
-    const isComplete = !!(
-      freelancer.firstName &&
-      freelancer.lastName &&
-      freelancer.skills &&
+    // Check profile completion manually
+    const isComplete =
+      !!freelancer.firstName?.trim() &&
+      !!freelancer.lastName?.trim() &&
+      Array.isArray(freelancer.skills) &&
       freelancer.skills.length > 0 &&
-      freelancer.hourlyRate &&
-      freelancer.hourlyRate > 0
-    );
+      typeof freelancer.hourlyRate === "number" &&
+      freelancer.hourlyRate > 0;
 
     return NextResponse.json(
       {
