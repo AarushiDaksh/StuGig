@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const services = [
   {
@@ -31,6 +32,8 @@ const services = [
 ];
 
 export function PopularServices() {
+  const router = useRouter();
+
   return (
     <section className="py-12 px-4 md:px-8 bg-background">
       <div className="text-center mb-10">
@@ -64,7 +67,17 @@ export function PopularServices() {
           ))}
         </div>
       </div>
+
+      {/* // jobs */}
+      <div className="flex justify-center mt-10">
+        <button
+          onClick={() => router.push("/jobs")}
+          className="px-6 py-2 rounded-md border text-black border-black hover:bg-black hover:text-white dark:text-white dark:border-white dark:hover:bg-white dark:hover:text-black font-medium transition"
+        >
+          Explore Jobs
+        </button>
+        </div>
+
     </section>
   );
 }
-

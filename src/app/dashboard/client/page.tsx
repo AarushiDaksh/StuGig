@@ -14,6 +14,7 @@ import { LogOut, Briefcase, User, MessageSquare } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { useRouter as useNextRouter } from "next/navigation";
+import RateFreelancer from "@/components/RateFreelancer";
 
 export default function ClientDashboard() {
   const { data: session, status } = useSession();
@@ -64,7 +65,7 @@ export default function ClientDashboard() {
           <h1 className="text-xl font-bold text-blue-800">CLIENT</h1>
           <div className="flex items-center gap-3">
             <p className="text-sm text-gray-500">Wallet</p>
-            <p className="text-lg font-bold">₱0.00</p>
+            <p className="text-lg font-bold">Rs0.00</p>
           </div>
         </div>
 
@@ -83,7 +84,7 @@ export default function ClientDashboard() {
               </div>
               <div className="bg-white shadow rounded-lg p-6 border">
                 <p className="text-sm text-gray-500">Wallet Balance</p>
-                <p className="text-2xl font-bold mt-2">₱0.00</p>
+                <p className="text-2xl font-bold mt-2">Rs0.00</p>
                 <a className="text-sm text-blue-500 mt-1 inline-block" href="#">View History →</a>
               </div>
             </div>
@@ -115,7 +116,17 @@ export default function ClientDashboard() {
         {activeTab === "Bids" && <ClientBidsPanel />}
         {activeTab === "Hired" && <HiredFreelancers />}
         {activeTab === "Payments" && <PaymentHistory />}
-        {activeTab === "Ratings" && <RatingsGiven />}
+        {activeTab === "Ratings" && (
+        <section>
+          <h2 className="text-xl font-semibold mb-4">Rate Your Freelancer</h2>
+          <RateFreelancer
+            clientId={session?.user?.id}
+            freelancerId={"686628b244f9c02512b17f73"} 
+            gigId={"686b389e929f8ca520cbf552"} //hardcoded here 
+          />
+        </section>
+      )}
+
         {activeTab === "Chat" && (
           <section className="mt-10">
             <h2 className="text-2xl font-semibold mb-4">Chat</h2>

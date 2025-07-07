@@ -7,6 +7,11 @@ const GigSchema = new mongoose.Schema({
   clientId: { type: mongoose.Schema.Types.ObjectId, ref: "UserClient", required: true },
   freelancerId: { type: mongoose.Schema.Types.ObjectId, ref: "UserFreelancer", default: null },
   deadline: { type: Date },
+  skills: {
+  type: [String],
+  default: [], 
+}
+
 }, { timestamps: true });
 
 export default mongoose.models.Gig || mongoose.model("Gig", GigSchema);

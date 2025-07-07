@@ -1,4 +1,5 @@
 "use client";
+
 import { useEffect, useState } from "react";
 
 interface Gig {
@@ -10,49 +11,43 @@ interface Gig {
 }
 
 export default function ClientJobList() {
-  const [gigs, setGigs] = useState<Gig[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [jobs, setJobs] = useState<Gig[]>([]);
 
   useEffect(() => {
-    const fetchGigs = async () => {
+    const fetchJobs = async () => {
       try {
-        const res = await fetch("/api/client/gigs");
+        const res = await fetch("/api/gigs/client");
         const data = await res.json();
-        setGigs(data.gigs || []);
+        if (data.success) {
+          setJobs(data.gigs);
+        }
       } catch (error) {
-        console.error("❌ Failed to fetch gigs:", error);
-      } finally {
-        setLoading(false);
+        console.error("Error fetching client jobs:", error);
       }
     };
 
-    fetchGigs();
+    fetchJobs();
   }, []);
 
-  if (loading) {
-    return <p className="text-gray-500">Loading gigs...</p>;
-  }
-
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Your Posted Gigs</h2>
-      {gigs.length === 0 ? (
-        <p className="text-gray-500">You haven’t posted any gigs yet.</p>
+    <section className="mt-10">
+      <h2 className="text-xl font-semibold mb-4">Your Posted Gigs</h2>
+      {jobs.length === 0 ? (
+        <p className="text-gray-500">No gigs posted yet.</p>
       ) : (
-        gigs.map((gig) => (
-          <div
-            key={gig._id}
-            className="bg-white p-4 rounded-md shadow-sm border"
-          >
-            <h3 className="text-lg font-bold">{gig.title}</h3>
-            <p className="text-gray-700">{gig.description}</p>
-            <p className="text-blue-600 font-medium mt-2">₹{gig.budget}</p>
-            <p className="text-sm text-gray-400 mt-1">
-              Posted on {new Date(gig.createdAt).toLocaleDateString()}
-            </p>
-          </div>
-        ))
+        <div className="space-y-4">
+          {jobs.map((job) => (
+            <div key={job._id} className="border p-4 rounded-lg bg-white shadow-sm">
+              <h3 className="text-lg font-bold">{job.title}</h3>
+              <p className="text-sm text-gray-600">{job.description}</p>
+              <p className="text-blue-600 font-semibold mt-1">₹{job.budget}</p>
+              <p className="text-xs text-gray-400 mt-1">
+                Posted on {new Date(job.createdAt).toLocaleDateString()}
+              </p>
+            </div>
+          ))}
+        </div>
       )}
-    </div>
+    </section>
   );
 }

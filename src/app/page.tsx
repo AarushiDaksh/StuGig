@@ -23,9 +23,9 @@ export default function HomePage() {
           headline="Bid Smart. Work Smart. Grow Smart."
           subheading="Join StuGig to find freelance gigs, post student projects, and get AI-matched to the perfect opportunity in your campus economy."
           ctaText="Find Talent"
-          ctaSecondaryText="Become a Freelancer"
-          ctaHref="/jobs"
-          secondaryCtaHref="/signup"
+          ctaSecondaryText="Find Work"
+          ctaHref="/login/client"         
+          secondaryCtaHref="/login/freelancer" 
         />
 
         {/* Explore Section */}

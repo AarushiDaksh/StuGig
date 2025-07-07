@@ -75,10 +75,10 @@ const Hero = React.forwardRef<HTMLDivElement, HeroProps>(
 
               <div className="items-center justify-center gap-x-4 space-y-3 sm:flex sm:space-y-0 pt-8">
                 <Button size="lg" className="px-8 w-full sm:w-auto" asChild>
-                  <Link href="/client-login">{ctaText}</Link>
+                  <Link href="/login/client">{ctaText}</Link>
                 </Button>
                 <Button size="lg" variant="outline" className="px-8 w-full sm:w-auto mt-4 sm:mt-0" asChild>
-                  <Link href="/freelancer-login">{ctaSecondaryText}</Link>
+                  <Link href="/login/freelancer">{ctaSecondaryText}</Link>
                 </Button>
               </div>
             </div>
