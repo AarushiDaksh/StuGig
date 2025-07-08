@@ -43,6 +43,7 @@ export default function ClientDashboard() {
       </main>
     );
   }
+  //
 
   const receiverId = user?.id; // own ID for testing
 
