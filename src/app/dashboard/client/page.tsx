@@ -1,4 +1,3 @@
-// app/dashboard/client/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -10,10 +9,9 @@ import HiredFreelancers from "@/components/HiredFreelancers";
 import PaymentHistory from "@/components/PaymentHistory";
 import RatingsGiven from "@/components/RatingGiven";
 import GigUploadForm from "@/components/GigUploadForm";
-import { LogOut, Briefcase, User, MessageSquare } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { useRouter as useNextRouter } from "next/navigation";
 import RateFreelancer from "@/components/RateFreelancer";
 
 export default function ClientDashboard() {
@@ -43,23 +41,26 @@ export default function ClientDashboard() {
       </main>
     );
   }
-  //
 
-  const receiverId = user?.id; // own ID for testing
+  // 🔽 Add payment handler here
+  const handlePayment = async (gigId: string, freelancerId: string) => {
+    try {
+      alert(`Initiating payment for Gig ID: ${gigId} to Freelancer ID: ${freelancerId}`);
+      // This will later call your Razorpay backend API
+    } catch (err) {
+      console.error("Payment error", err);
+    }
+  };
+
+  const receiverId = user?.id;
 
   return (
-        <main className="flex min-h-screen bg-gray-50 text-black">
-          <aside className="w-20 bg-white border-r min-h-screen flex flex-col items-center py-8 gap-6">
-      <button onClick={() => setActiveTab("Jobs")} title="Gigs">💼</button>
-      <button onClick={() => setActiveTab("Bids")} title="Bids">📥</button>
-      <button onClick={() => setActiveTab("Ratings")} title="Ratings">⭐</button>
-
-      {/* <button onClick={() => router.push(`/chat`)} title="Chat Room">
-        💬
-      </button> */}
-
-    </aside>
-
+    <main className="flex min-h-screen bg-gray-50 text-black">
+      <aside className="w-20 bg-white border-r min-h-screen flex flex-col items-center py-8 gap-6">
+        <button onClick={() => setActiveTab("Jobs")} title="Gigs">💼</button>
+        <button onClick={() => setActiveTab("Bids")} title="Bids">📥</button>
+        <button onClick={() => setActiveTab("Ratings")} title="Ratings">⭐</button>
+      </aside>
 
       <section className="flex-1 p-8">
         <div className="flex justify-between items-center mb-6">
@@ -73,16 +74,32 @@ export default function ClientDashboard() {
         {activeTab === "Jobs" && (
           <>
             <GigUploadForm />
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+              {/* Ongoing Gigs */}
               <div className="bg-white shadow rounded-lg p-6 border">
                 <p className="text-sm text-gray-500">Ongoing Gigs</p>
                 <p className="text-2xl font-bold mt-2">No ongoing gigs</p>
               </div>
+
+              {/* Completed Gigs + Payment Button */}
               <div className="bg-white shadow rounded-lg p-6 border">
                 <p className="text-sm text-gray-500">Total Completed Gigs</p>
-                <p className="text-2xl font-bold mt-2">0</p>
-                <a className="text-sm text-blue-500 mt-1 inline-block" href="#">View All →</a>
+                <div className="mt-2">
+                  <div className="flex justify-between items-center mb-2">
+                    <p className="font-semibold">Logo Design for Student Club</p>
+                    <button
+                      onClick={() => handlePayment("686b389e929f8ca520cbf552", "686628b244f9c02512b17f73")}
+                      className="px-3 py-1 text-sm rounded-md bg-green-600 text-white hover:bg-green-700"
+                    >
+                      Pay Now ₹800
+                    </button>
+                  </div>
+                  <a className="text-sm text-blue-500 inline-block" href="#">View All →</a>
+                </div>
               </div>
+
+              {/* Wallet Balance */}
               <div className="bg-white shadow rounded-lg p-6 border">
                 <p className="text-sm text-gray-500">Wallet Balance</p>
                 <p className="text-2xl font-bold mt-2">Rs0.00</p>
@@ -94,6 +111,7 @@ export default function ClientDashboard() {
               <ClientJobList />
             </div>
 
+            {/* Transaction History */}
             <div className="mt-10 bg-white shadow rounded-lg p-6 border">
               <h2 className="text-lg font-semibold mb-4">Transaction History</h2>
               <table className="w-full text-sm text-left text-gray-600">
@@ -118,15 +136,15 @@ export default function ClientDashboard() {
         {activeTab === "Hired" && <HiredFreelancers />}
         {activeTab === "Payments" && <PaymentHistory />}
         {activeTab === "Ratings" && (
-        <section>
-          <h2 className="text-xl font-semibold mb-4">Rate Your Freelancer</h2>
-          <RateFreelancer
-            clientId={session?.user?.id}
-            freelancerId={"686628b244f9c02512b17f73"} 
-            gigId={"686b389e929f8ca520cbf552"} //hardcoded here 
-          />
-        </section>
-      )}
+          <section>
+            <h2 className="text-xl font-semibold mb-4">Rate Your Freelancer</h2>
+            <RateFreelancer
+              clientId={session?.user?.id}
+              freelancerId={"686628b244f9c02512b17f73"}
+              gigId={"686b389e929f8ca520cbf552"}
+            />
+          </section>
+        )}
 
         {activeTab === "Chat" && (
           <section className="mt-10">
