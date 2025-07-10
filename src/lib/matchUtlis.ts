@@ -1,4 +1,6 @@
 export function calculateMatchScore(freelancer: any, job: any): number {
+  if (!freelancer || !freelancer.skills || !Array.isArray(freelancer.skills)) return 0;
+
   let score = 0;
 
   // Skills match (50%)
