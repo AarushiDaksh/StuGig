@@ -56,6 +56,7 @@ export default function ClientDashboard() {
       </main>
     );
   }
+  //
 
   return (
     <main className="flex min-h-screen bg-gray-50 text-black">

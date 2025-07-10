@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { MessageSquare, Share2 } from "lucide-react";
-
+//
 interface Gig {
   _id: string;
   title: string;
