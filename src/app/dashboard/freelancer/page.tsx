@@ -6,6 +6,7 @@ import { useSession, signOut } from "next-auth/react";
 import { LogOut, Share2, User } from "lucide-react";
 import ChatPanel from "@/components/ChatPanel";
 import RecommendedJobs from "@/components/RecommendedJobs";
+import SkillSwapPage from "@/components/SkillSwap";
 
 export default function FreelancerDashboard() {
   const { data: session } = useSession();
@@ -109,6 +110,14 @@ const handleApply = async (gig: any) => {
         <button onClick={() => setActiveTab("profile")} title="Profile">👤</button>
         <button onClick={() => setActiveTab("gigs")} title="Gigs">💼</button>
         <button onClick={() => setActiveTab("chat")} title="Chat">💬</button>
+        <button
+          onClick={() => setActiveTab("skillswap")}
+          title="SkillSwap"
+          className={`${activeTab === "skillswap" ? "text-blue-600 font-bold" : ""}`}
+        >
+          💱
+        </button>
+
       </aside>
 
       {/* Main Content */}
@@ -120,6 +129,19 @@ const handleApply = async (gig: any) => {
             <p className="text-lg font-bold">Rs0.00</p>
           </div>
         </div>
+
+
+        {activeTab === "skillswap" && (
+          <section className="w-full h-full">
+            <h2 className="text-2xl font-semibold mb-4">SkillSwap</h2>
+            <p className="text-sm text-gray-600 mb-2">
+              Swipe right to swap your skills with other freelancers!
+            </p>
+            <section className="w-full flex justify-center">
+              <SkillSwapPage />
+            </section>
+          </section>
+        )}
 
         {/* Dashboard */}
         {activeTab === "dashboard" && (
