@@ -17,34 +17,96 @@ import ChatPanel from "@/components/ChatPanel";
 
 import { LogOut } from "lucide-react";
 
+
+interface Transaction {
+  _id: string;
+  userId: string;
+  amount: number;
+  description: string;
+  type: "credit" | "debit";
+  createdAt: string;
+}
+
+
 export default function ClientDashboard() {
   const { data: session, status } = useSession();
   const user = useSelector((state: RootState) => state.user.currentUser);
   const router = useRouter();
 
+
+
+
+const [walletBalance, setWalletBalance] = useState(0);
+const [transactions, setTransactions] = useState<Transaction[]>([]);
+
+const userId = session?.user?.id;
+
+
+
   const [activeTab, setActiveTab] = useState("jobs");
   const [gigStats, setGigStats] = useState({ ongoing: 0, completed: 0 });
   const [chatFreelancerId, setChatFreelancerId] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (status === "loading") return;
-    if (status === "unauthenticated" || session?.user?.role !== "client") {
-      router.push("/login/client");
-    }
-  }, [session, status, router]);
-
-  useEffect(() => {
-    const fetchStats = async () => {
-      if (!session?.user?.id) return;
-      const res = await fetch(`/api/client/gigs/status?clientId=${session.user.id}`);
-      const data = await res.json();
-      if (data.success) {
-        setGigStats(data.stats);
+    useEffect(() => {
+      if (status === "loading") return;
+      if (status === "unauthenticated" || session?.user?.role !== "client") {
+        router.push("/login/client");
       }
-    };
+    }, [session, status, router]);
 
-    fetchStats();
-  }, [session?.user?.id]);
+        useEffect(() => {
+        const fetchStats = async () => {
+          if (!session?.user?.id) return;
+          const res = await fetch(`/api/client/gigs/status?clientId=${session.user.id}`);
+          const data = await res.json();
+          if (data.success) {
+            setGigStats(data.stats);
+          }
+        };
+
+        fetchStats();
+      }, [session?.user?.id]);
+
+
+
+      useEffect(() => {
+      if (!userId) return;
+
+      fetch(`/api/wallet/balance?userId=${userId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) setWalletBalance(data.balance);
+        });
+
+      fetch(`/api/wallet/transactions?userId=${userId}`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success) setTransactions(data.transactions);
+        });
+    }, [userId]);
+
+const handleAddFunds = async () => {
+  const res = await fetch("/api/wallet/deposit", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userId, amount: 1000 }),
+  });
+
+  const data = await res.json();
+
+  if (data.success) {
+    // Refresh wallet balance
+    fetch(`/api/wallet/balance?userId=${userId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) setWalletBalance(data.balance);
+      });
+  } else {
+    alert("Failed to add funds.");
+  }
+};
+
+
 
   if (status === "loading") {
     return (
@@ -69,14 +131,25 @@ export default function ClientDashboard() {
       </aside>
 
       {/* Main Content */}
-      <section className="flex-1 p-8">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-xl font-bold text-blue-800">CLIENT</h1>
-          <div className="flex items-center gap-3">
-            <p className="text-sm text-gray-500">Wallet</p>
-            <p className="text-lg font-bold">Rs0.00</p>
-          </div>
+              <section className="flex-1 p-8">
+                <div className="flex justify-between items-center mb-6">
+                  <h1 className="text-xl font-bold text-blue-800">CLIENT</h1>
+                  <div className="flex items-center gap-3">
+          <p className="text-sm text-gray-500">Wallet</p>
+          <p className="text-lg font-bold">Rs{walletBalance.toFixed(2)}</p>
+          <button
+            onClick={handleAddFunds}
+            className="ml-2 bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700"
+          >
+            + Add ₹1000
+          </button>
         </div>
+
+        </div>
+
+
+        
+
 
         {/* Jobs */}
         {activeTab === "jobs" && (
@@ -104,19 +177,29 @@ export default function ClientDashboard() {
             <div className="mt-10 bg-white shadow rounded-lg p-6 border">
               <h2 className="text-lg font-semibold mb-4">Transaction History</h2>
               <table className="w-full text-sm text-left text-gray-600">
-                <thead className="bg-gray-50 border-b">
-                  <tr>
-                    <th className="px-4 py-2">Date</th>
-                    <th className="px-4 py-2">Description</th>
-                    <th className="px-4 py-2">Amount</th>
+                  <thead>
+              <tr>
+                <th className="px-4 py-2">Date</th>
+                <th className="px-4 py-2">Description</th>
+                <th className="px-4 py-2">Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {transactions.length === 0 ? (
+                <tr>
+                  <td className="px-4 py-2" colSpan={3}>No results.</td>
+                </tr>
+              ) : (
+                transactions.map((txn) => (
+                  <tr key={txn._id}>
+                    <td className="px-4 py-2">{new Date(txn.createdAt).toLocaleDateString()}</td>
+                    <td className="px-4 py-2">{txn.description}</td>
+                    <td className="px-4 py-2">{txn.type === "credit" ? "+" : "-"}₹{txn.amount}</td>
                   </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td colSpan={3} className="text-center py-6 text-gray-400">No results.</td>
-                  </tr>
-                </tbody>
-              </table>
+                ))
+              )}
+            </tbody>
+                        </table>
             </div>
           </>
         )}
