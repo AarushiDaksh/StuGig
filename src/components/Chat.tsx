@@ -38,25 +38,27 @@ export default function Chat({
 
     setupConversation();
   }, [receiverId, userId, propConversationId]);
+  
+useEffect(() => {
+  const fetchMessages = async () => {
+    if (!conversationId) return;
 
-  // 📥 Load messages when conversationId becomes available
-  useEffect(() => {
-    const fetchMessages = async () => {
-      if (!conversationId) return;
+    const res = await fetch(`/api/chat/messages?conversationId=${conversationId}`);
+    const data = await res.json();
 
-      const res = await fetch(`/api/chat/message?conversationId=${conversationId}`);
-      const data = await res.json();
-      if (data.success) setMessages(data.messages);
-    };
+    if (data.success) {
+      setMessages(data.messages); // overwrite state with old messages
+    }
+  };
 
-    fetchMessages();
-  }, [conversationId]);
+  fetchMessages();
+}, [conversationId]);
 
-  // 📤 Send message
+  //  Send message
   const handleSend = async () => {
     if (!newMessage.trim() || !conversationId || !userId) return;
 
-    const res = await fetch("/api/chat/message", {
+    const res = await fetch("/api/chat/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

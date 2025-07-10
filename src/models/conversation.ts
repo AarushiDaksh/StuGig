@@ -1,14 +1,7 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, model, models } from "mongoose";
 
-const ConversationSchema = new mongoose.Schema(
-  {
-    members: {
-      type: [String],
-      required: true,
-    },
-  },
-  { timestamps: true }
-);
+const ConversationSchema = new Schema({
+  members: { type: [String], required: true },
+}, { timestamps: true });
 
-ConversationSchema.index({ members: 1 }, { unique: true });
-export default mongoose.models.Conversation || mongoose.model("Conversation", ConversationSchema);
+export default models.Conversation || model("Conversation", ConversationSchema);
