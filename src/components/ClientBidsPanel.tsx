@@ -50,22 +50,22 @@ export default function ClientBidsPanel({
   }, []);
 
   const handleBidAction = async (bidId: string, action: "accepted" | "rejected") => {
-    try {
-      const res = await fetch(`/api/client/bids/${bidId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status: action }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setBids((prev) =>
-          prev.map((b) => (b._id === bidId ? { ...b, status: action } : b))
-        );
-      }
-    } catch (error) {
-      console.error("Failed to update bid status", error);
+  try {
+    const res = await fetch(`/api/client/bids`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ bidId, status: action }), // ✅ Send bidId in body
+    });
+    const data = await res.json();
+    if (data.success) {
+      setBids((prev) =>
+        prev.map((b) => (b._id === bidId ? { ...b, status: action } : b))
+      );
     }
-  };
+  } catch (error) {
+    console.error("Failed to update bid status", error);
+  }
+};
 
   if (loading) return <p className="text-gray-500">Loading bids...</p>;
   if (error) return <p className="text-red-500">{error}</p>;

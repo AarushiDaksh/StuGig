@@ -9,10 +9,11 @@ const GigSchema = new mongoose.Schema({
   deadline: { type: Date },
   isCompleted: { type: Boolean, default: false },
   status: {
-      type: String,
-      enum: ["open", "ongoing", "completed"],
-      default: "open",
-    },
+  type: String,
+  enum: ["open", "in_progress", "completed"],
+  default: "open"
+},
+
   skills: {
   type: [String],
   default: [], 

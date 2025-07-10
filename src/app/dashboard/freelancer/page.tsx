@@ -18,6 +18,7 @@ export default function FreelancerDashboard() {
   const [appliedGigs, setAppliedGigs] = useState<any[]>([]);
   const [completedGigs, setCompletedGigs] = useState<any[]>([]);
 
+  // Fetch profile
   useEffect(() => {
     if (!userId) return;
     const fetchData = async () => {
@@ -28,24 +29,77 @@ export default function FreelancerDashboard() {
     fetchData();
   }, [userId]);
 
-  const handleApply = async (gig: any) => {
-    await fetch("/api/freelancer/bid", {
-      method: "POST",
-      body: JSON.stringify({
-        gigId: gig._id,
-        freelancerId: userId,
-        clientId: gig.clientId,
-      }),
-    });
-    router.refresh();
-  };
+  // Fetch all gigs (available, applied, completed)
+  useEffect(() => {
+    if (!userId) return;
+    const fetchGigs = async () => {
+      try {
+        const res = await fetch(`/api/freelancer/gigs?freelancerId=${userId}`);
+        const data = await res.json();
+        if (data.success) {
+          setAvailableGigs(data.availableGigs || []);
+          setAppliedGigs(data.appliedGigs || []);
+          setCompletedGigs(data.completedGigs || []);
+        }
+      } catch (err) {
+        console.error("Error fetching gigs:", err);
+      }
+    };
+    fetchGigs();
+  }, [userId]);
 
-  const handleMarkComplete = async (gigId: string) => {
-    await fetch(`/api/freelancer/complete/${gigId}`, {
-      method: "PUT",
-    });
+  // Apply to a gig
+const handleApply = async (gig: any) => {
+  const res = await fetch("/api/freelancer/bid", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      gigId: gig._id,
+      freelancerId: userId,
+      clientId: gig.clientId,
+      amount: gig.budget,
+    }),
+  });
+
+  const data = await res.json();
+
+  if (res.status === 409) {
+    alert("You have already applied to this gig.");
+    return;
+  }
+
+  if (data.success) {
+    alert("Bid submitted successfully.");
     router.refresh();
-  };
+  } else {
+    alert("Something went wrong.");
+  }
+};
+
+
+
+
+  // Mark gig as completed
+  const markAsCompleted = async (gigId: string) => {
+  try {
+    const res = await fetch("/api/freelancer/complete", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ gigId }),
+    });
+
+    const data = await res.json();
+    if (data.success) {
+      alert("Marked as completed ✅");
+     
+    } else {
+      alert("Error: " + data.error);
+    }
+  } catch (err) {
+    console.error("Failed to mark as completed:", err);
+  }
+};
+
 
   return (
     <main className="flex min-h-screen bg-gray-50 text-black">
@@ -122,102 +176,101 @@ export default function FreelancerDashboard() {
 
         {/* Chat */}
         {activeTab === "chat" && (
-          <>
-            <section className="mt-10">
-              <h2 className="text-2xl font-semibold mb-4">Chat</h2>
-              <p className="text-sm text-gray-600">
-                Chat with your connected clients in a dedicated chat room.
-              </p>
-            </section>
-
+          <section className="mt-10">
+            <h2 className="text-2xl font-semibold mb-4">Chat</h2>
+            <p className="text-sm text-gray-600 mb-2">
+              Chat with your connected clients in a dedicated chat room.
+            </p>
             <section className="w-full h-[80vh] bg-white shadow-inner rounded-md p-6 border mt-6">
               <ChatPanel role="freelancer" />
             </section>
-          </>
+          </section>
         )}
 
         {/* Gigs */}
         {activeTab === "gigs" && (
-          <section className="space-y-8">
+          <section className="space-y-10">
             {/* Available Gigs */}
-            <h2 className="text-lg font-semibold">Available Gigs</h2>
-            {availableGigs.length === 0 ? (
-              <p className="text-gray-500">No gigs available at the moment.</p>
-            ) : (
-              availableGigs.map((gig: any) => (
-                <div key={gig._id} className="bg-white p-6 border rounded-lg shadow-sm">
-                  <div className="flex justify-between items-center mb-2">
-                    <p className="text-sm text-gray-500">
-                      Posted on {new Date(gig.createdAt).toLocaleDateString()}
-                    </p>
-                    <span className="bg-green-100 text-green-600 text-xs px-2 py-1 rounded">
-                      Available
-                    </span>
+            <div>
+              <h2 className="text-lg font-semibold">Available Gigs</h2>
+              {availableGigs.length === 0 ? (
+                <p className="text-gray-500">No gigs available at the moment.</p>
+              ) : (
+                availableGigs.map((gig: any) => (
+                  <div key={gig._id} className="bg-white p-6 border rounded-lg shadow-sm">
+                    <div className="flex justify-between items-center mb-2">
+                      <p className="text-sm text-gray-500">
+                        Posted on {new Date(gig.createdAt).toLocaleDateString()}
+                      </p>
+                      <span className="bg-green-100 text-green-600 text-xs px-2 py-1 rounded">
+                        Available
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-bold mb-1">{gig.title}</h3>
+                    <p className="text-gray-700 text-sm mb-2">{gig.description}</p>
+                    <p className="text-sm text-gray-500">Budget: ₹{gig.budget.toLocaleString()}</p>
+                    <div className="mt-4 flex gap-3">
+                      <button
+                        onClick={() => handleApply(gig)}
+                        className="px-4 py-2 rounded border text-sm text-blue-600 border-blue-600 hover:bg-blue-50"
+                      >
+                        Apply
+                      </button>
+                      <button className="flex items-center gap-1 text-sm text-gray-600 hover:text-black">
+                        <Share2 size={16} /> Share
+                      </button>
+                    </div>
                   </div>
-                  <h3 className="text-lg font-bold mb-1">{gig.title}</h3>
-                  <p className="text-gray-700 text-sm mb-2">{gig.description}</p>
-                  <p className="text-sm text-gray-500">Budget: ₹{gig.budget.toLocaleString()}</p>
-                  <div className="mt-4 flex gap-3">
-                    <button
-                      onClick={() => handleApply(gig)}
-                      className="px-4 py-2 rounded border text-sm text-blue-600 border-blue-600 hover:bg-blue-50"
-                    >
-                      Apply
-                    </button>
-                    <button className="flex items-center gap-1 text-sm text-gray-600 hover:text-black">
-                      <Share2 size={16} /> Share
-                    </button>
-                  </div>
-                </div>
-              ))
-            )}
+                ))
+              )}
+            </div>
 
             {/* Applied Gigs */}
-            <h2 className="text-lg font-semibold">Applied Gigs</h2>
-            {appliedGigs.length === 0 ? (
-              <p className="text-gray-500">You haven't applied to any gigs yet.</p>
-            ) : (
-              appliedGigs.map((gig: any) => (
-                <div key={gig._id} className="bg-gray-100 p-6 border rounded-lg">
-                  <h3 className="text-lg font-bold mb-1">{gig.title}</h3>
-                  <p className="text-gray-700 text-sm mb-2">{gig.description}</p>
-                  <p className="text-sm text-gray-500">
-                    Applied on: {new Date(gig.createdAt).toLocaleDateString()}
-                  </p>
-                  <div className="flex gap-3 mt-3">
-                    <button
-                      onClick={() => handleMarkComplete(gig._id)}
-                      className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-sm"
-                    >
-                      Mark as Completed
-                    </button>
+            <div>
+              <h2 className="text-lg font-semibold">Applied Gigs</h2>
+              {appliedGigs.length === 0 ? (
+                <p className="text-gray-500">You haven't applied to any gigs yet.</p>
+              ) : (
+                appliedGigs.map((gig: any) => (
+                  <div key={gig._id} className="bg-gray-100 p-6 border rounded-lg">
+                    <h3 className="text-lg font-bold mb-1">{gig.title}</h3>
+                    <p className="text-gray-700 text-sm mb-2">{gig.description}</p>
+                    <p className="text-sm text-gray-500">
+                      Applied on: {new Date(gig.createdAt).toLocaleDateString()}
+                    </p>
+                    <div className="flex gap-3 mt-3">
+                      <button onClick={() => markAsCompleted(gig._id)}>Mark as Completed</button>
+
+                    </div>
                   </div>
-                </div>
-              ))
-            )}
+                ))
+              )}
+            </div>
 
             {/* Completed Gigs */}
-            <h2 className="text-lg font-semibold">Completed Gigs</h2>
-            {completedGigs.length === 0 ? (
-              <p className="text-gray-500">You have no completed gigs yet.</p>
-            ) : (
-              completedGigs.map((gig: any) => (
-                <div key={gig._id} className="bg-white p-6 border rounded-lg shadow-sm">
-                  <h3 className="text-lg font-bold mb-1">{gig.title}</h3>
-                  <p className="text-gray-700 text-sm mb-2">{gig.description}</p>
-                  <p className="text-sm text-gray-500">
-                    Completed on: {new Date(gig.updatedAt).toLocaleDateString()}
-                  </p>
-                  <span className="inline-block mt-2 px-2 py-1 bg-green-100 text-green-700 text-xs rounded">
-                    Completed
-                  </span>
-                </div>
-              ))
-            )}
+            <div>
+              <h2 className="text-lg font-semibold">Completed Gigs</h2>
+              {completedGigs.length === 0 ? (
+                <p className="text-gray-500">You have no completed gigs yet.</p>
+              ) : (
+                completedGigs.map((gig: any) => (
+                  <div key={gig._id} className="bg-white p-6 border rounded-lg shadow-sm">
+                    <h3 className="text-lg font-bold mb-1">{gig.title}</h3>
+                    <p className="text-gray-700 text-sm mb-2">{gig.description}</p>
+                    <p className="text-sm text-gray-500">
+                      Completed on: {new Date(gig.updatedAt).toLocaleDateString()}
+                    </p>
+                    <span className="inline-block mt-2 px-2 py-1 bg-green-100 text-green-700 text-xs rounded">
+                      Completed
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
           </section>
         )}
 
-        {/* Logout Button */}
+        {/* Logout */}
         <div className="text-center mt-10">
           <button
             onClick={() => signOut({ callbackUrl: "/" })}
