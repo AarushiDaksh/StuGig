@@ -19,6 +19,49 @@ export default function FreelancerDashboard() {
   const [appliedGigs, setAppliedGigs] = useState<any[]>([]);
   const [completedGigs, setCompletedGigs] = useState<any[]>([]);
 
+
+
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [monthlyEarnings, setMonthlyEarnings] = useState(0);
+
+
+
+
+
+useEffect(() => {
+  if (!userId) return;
+
+  // Fetch wallet balance
+  fetch(`/api/freelancer/wallet/balance?userId=${userId}`)
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) setWalletBalance(data.balance);
+    });
+
+  // Fetch all transactions and filter this month's earnings
+  fetch(`/api/freelancer/wallet/transactions?userId=${userId}`)
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.success) {
+        const now = new Date();
+        const earnings = data.transactions
+          .filter((txn: any) => {
+            const txnDate = new Date(txn.createdAt);
+            return txn.type === "credit" &&
+              txnDate.getMonth() === now.getMonth() &&
+              txnDate.getFullYear() === now.getFullYear();
+          })
+          .reduce((acc: number, txn: any) => acc + txn.amount, 0);
+
+        setMonthlyEarnings(earnings);
+      }
+    });
+}, [userId]);
+
+
+
+
+
   // Fetch profile
   useEffect(() => {
     if (!userId) return;
@@ -124,10 +167,11 @@ const handleApply = async (gig: any) => {
       <div className="flex-1 p-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-xl font-bold text-blue-800">FREELANCER</h1>
-          <div className="flex items-center gap-3">
-            <p className="text-sm text-gray-500">Wallet</p>
-            <p className="text-lg font-bold">Rs0.00</p>
-          </div>
+      <div className="flex items-center gap-3">
+        <p className="text-sm text-gray-500">Wallet</p>
+        <p className="text-lg font-bold">Rs{walletBalance}</p>
+      </div>
+
         </div>
 
 
@@ -146,20 +190,23 @@ const handleApply = async (gig: any) => {
         {/* Dashboard */}
         {activeTab === "dashboard" && (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white shadow rounded-lg p-6 border">
-                <p className="text-sm text-gray-500">Total Completed Gigs</p>
-                <p className="text-2xl font-bold mt-2">{completedGigs.length}</p>
-              </div>
-              <div className="bg-white shadow rounded-lg p-6 border">
-                <p className="text-sm text-gray-500">Earnings this Month</p>
-                <p className="text-2xl font-bold mt-2">Rs0.00</p>
-              </div>
-              <div className="bg-white shadow rounded-lg p-6 border">
-                <p className="text-sm text-gray-500">Wallet Balance</p>
-                <p className="text-2xl font-bold mt-2">Rs0.00</p>
-              </div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-white shadow rounded-lg p-6 border">
+            <p className="text-sm text-gray-500">Total Completed Gigs</p>
+            <p className="text-2xl font-bold mt-2">{completedGigs.length}</p>
+          </div>
+
+          <div className="bg-white shadow rounded-lg p-6 border">
+            <p className="text-sm text-gray-500">Earnings this Month</p>
+            <p className="text-2xl font-bold mt-2">Rs{monthlyEarnings}</p>
+          </div>
+
+          <div className="bg-white shadow rounded-lg p-6 border">
+            <p className="text-sm text-gray-500">Wallet Balance</p>
+            <p className="text-2xl font-bold mt-2">Rs{walletBalance}</p>
+          </div>
+        </div>
+
             <RecommendedJobs freelancerId={userId as string} />
           </>
         )}
@@ -261,7 +308,7 @@ const handleApply = async (gig: any) => {
                       Applied on: {new Date(gig.createdAt).toLocaleDateString()}
                     </p>
                     <div className="flex gap-3 mt-3">
-                      <button onClick={() => markAsCompleted(gig._id)}>Mark as Completed</button>
+                      <button  className="text-green-300"  onClick={() => markAsCompleted(gig._id)}>Mark as Completed</button>
 
                     </div>
                   </div>
