@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import connect from "@/utlis/db";
 import Bid from "@/models/Bid";
+import Gig from "@/models/gigs"; //  Import Gig model
 
 export async function POST(req: NextRequest) {
   await connect();
@@ -15,6 +16,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Create the bid
     const bid = await Bid.create({
       gigId,
       clientId,
@@ -22,6 +24,13 @@ export async function POST(req: NextRequest) {
       amount,
       proposal,
     });
+
+    // Update the gig with assigned freelancer
+    await Gig.findByIdAndUpdate(
+      gigId,
+      { freelancerId },
+      { new: true }
+    );
 
     return NextResponse.json({ success: true, bid }, { status: 201 });
   } catch (err) {
