@@ -1,29 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import connect from "@/utlis/db";
-import UserClient from "@/models/UserClient";
 import UserFreelancer from "@/models/UserFreelancer";
+import UserClient from "@/models/UserClient";
 
 export async function GET(req: NextRequest) {
   await connect();
   const { searchParams } = new URL(req.url);
-  const userId = searchParams.get("userId");
-  const role = searchParams.get("role");
+  const id = searchParams.get("id");
 
-  if (!userId || !role) {
-    return NextResponse.json({ error: "Missing userId or role" }, { status: 400 });
+  if (!id) {
+    return NextResponse.json({ success: false, message: "Missing user ID" }, { status: 400 });
   }
 
-  try {
-    const Model = role === "freelancer" ? UserFreelancer : UserClient;
-    const user = await Model.findById(userId).select("username email firstName lastName profilePicture");
+  let user = await UserFreelancer.findById(id).lean();
+  if (!user) user = await UserClient.findById(id).lean();
+  if (!user) return NextResponse.json({ success: false, message: "User not found" }, { status: 404 });
 
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-
-    return NextResponse.json({ user });
-  } catch (err) {
-    const error = err as Error;
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  return NextResponse.json({ success: true, user });
 }

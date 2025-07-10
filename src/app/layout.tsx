@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   authors: [{ name: "StuGig Team" }],
   creator: "StuGig",
   publisher: "StuGig",
-  metadataBase: new URL("https://stugig.io"),
+  metadataBase: new URL("https://stu-gig.vercel.app/"),
   openGraph: {
     type: "website",
     title: "StuGig | Student Freelance Platform",

@@ -7,6 +7,12 @@ const GigSchema = new mongoose.Schema({
   clientId: { type: mongoose.Schema.Types.ObjectId, ref: "UserClient", required: true },
   freelancerId: { type: mongoose.Schema.Types.ObjectId, ref: "UserFreelancer", default: null },
   deadline: { type: Date },
+  isCompleted: { type: Boolean, default: false },
+  status: {
+      type: String,
+      enum: ["open", "ongoing", "completed"],
+      default: "open",
+    },
   skills: {
   type: [String],
   default: [], 

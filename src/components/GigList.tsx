@@ -9,17 +9,18 @@ interface Gig {
   description: string;
   budget: number;
   createdAt: string;
+  clientId: string;
   applied: boolean;
 }
 
-export default function GigList() {
+export default function GigList({ freelancerId }: { freelancerId: string }) {
   const [gigs, setGigs] = useState<Gig[]>([]);
   const [activeTab, setActiveTab] = useState<"all" | "applied">("all");
 
   useEffect(() => {
     const fetchGigs = async () => {
       try {
-        const res = await fetch("/api/gigs/all");
+        const res = await fetch(`/api/gigs/all?freelancerId=${freelancerId}`);
         const data = await res.json();
         setGigs(data.gigs || []);
       } catch (error) {
@@ -28,23 +29,64 @@ export default function GigList() {
     };
 
     fetchGigs();
-  }, []);
+  }, [freelancerId]);
 
-  const handleApply = async (gigId: string) => {
+  const handleApply = async (gig: Gig) => {
     try {
+      // Step 1: Apply for gig
       const res = await fetch("/api/bids", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ gigId, amount: 0, proposal: "Interested in this gig!" }),
+        body: JSON.stringify({
+          gigId: gig._id,
+          clientId: gig.clientId,
+          freelancerId,
+          amount: gig.budget,
+          proposal: "Interested in this gig!",
+        }),
       });
+
       const data = await res.json();
-      if (data.success) {
-        alert("Applied successfully!");
-        setGigs((prev) => prev.map((gig) => (gig._id === gigId ? { ...gig, applied: true } : gig)));
-      } else {
+      if (!data.success) {
         alert("Error: " + data.error);
+        return;
       }
+
+      // Update UI
+      setGigs((prev) => prev.map((g) => (g._id === gig._id ? { ...g, applied: true } : g)));
+      alert("Applied successfully!");
+
+      // Step 2: Create conversation
+      const convRes = await fetch("/api/chat/conversation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          clientId: gig.clientId,
+          freelancerId,
+        }),
+      });
+
+      const convData = await convRes.json();
+      const conversationId = convData.conversation?._id;
+
+      if (!conversationId) {
+        console.error("Conversation creation failed");
+        return;
+      }
+
+      // Step 3: Send initial message
+      await fetch("/api/chat/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          conversationId,
+          sender: freelancerId,
+          text: `Hi, I've applied for your gig "${gig.title}". Looking forward to working with you!`,
+        }),
+      });
+
     } catch (err) {
+      console.error("Apply Error:", err);
       alert("Failed to apply for gig");
     }
   };
@@ -81,7 +123,7 @@ export default function GigList() {
             <div className="flex gap-2">
               {!gig.applied && (
                 <button
-                  onClick={() => handleApply(gig._id)}
+                  onClick={() => handleApply(gig)}
                   className="px-4 py-1 bg-blue-600 text-white rounded text-sm"
                 >
                   Apply

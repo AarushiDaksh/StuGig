@@ -1,13 +1,22 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, models, model } from "mongoose";
 
-const MessageSchema = new mongoose.Schema(
+const MessageSchema = new Schema(
   {
-    senderId: { type: mongoose.Schema.Types.ObjectId, required: true },
-    receiverId: { type: mongoose.Schema.Types.ObjectId, required: true },
-    content: { type: String, required: true },
-    role: { type: String, enum: ["client", "freelancer"], required: true },
+    conversationId: {
+      type: Schema.Types.ObjectId,
+      ref: "Conversation",
+      required: true,
+    },
+    sender: {
+      type: String, 
+      required: true,
+    },
+    text: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );
 
-export default mongoose.models.Message || mongoose.model("Message", MessageSchema);
+export default models.Message || model("Message", MessageSchema, "messages");
