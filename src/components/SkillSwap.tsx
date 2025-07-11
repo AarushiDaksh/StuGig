@@ -36,37 +36,44 @@ export default function SkillSwapPage() {
     setProfiles(prev => prev.filter(p => p.userId !== toUser));
   };
 
-  
   const dummyProfile: SwapProfile = {
     userId: "dummy",
     name: "This is dummy user",
-    avatar: "https://cdn-icons-png.flaticon.com/128/11498/11498793.png", 
+    avatar: "https://cdn-icons-png.flaticon.com/128/11498/11498793.png",
     description: "I'm a logo designer looking for a frontend dev to build my site!",
     offeredSkill: "🎨 Logo Design",
     requiredSkill: "💻 Web Development",
   };
 
   return (
-    <div className="mt-10 space-y-6">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold mb-2">🔥 SkillSwap</h2>
-        <p className="text-sm text-gray-500">When Freelancers complete building there profile it will be shown here </p>
-        <p className="text-sm text-gray-500">Swipe right to match with other freelancers</p>
-      </div>
+    <div
+      className="min-h-screen w-full  bg-center py-12 px-4"
+      style={{ backgroundImage: "url('/hi.jpeg')" }}
+    >
+      <div className="max-w-xl mx-auto space-y-6 rounded-2xl p-6 shadow-xl border border-white/20 bg-white/30 backdrop-blur-md">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-2 text-[#FFADFF] drop-shadow">
+            🔥 SkillSwap
+          </h2>
+          <p className="text-sm text-[#cb3853]/90">
+            When Freelancers complete building their profile it will be shown here
+          </p>
+          <p className="text-sm text-[#cb3853]">
+            Swipe right to match with other freelancers
+          </p>
+        </div>
 
-      {profiles.length > 0 ? (
-        <SwipeCard
-          profile={profiles[0]}
-          onSwipeLeft={() => swipe(profiles[0].userId, "left")}
-          onSwipeRight={() => swipe(profiles[0].userId, "right")}
-        />
-      ) : (
-        <SwipeCard
-          profile={dummyProfile}
-          onSwipeLeft={() => {}}
-          onSwipeRight={() => {}}
-        />
-      )}
+        {/* Uncomment this to show the cards */}
+        {/* {profiles.length > 0 ? (
+          <SwipeCard
+            profile={profiles[0]}
+            onSwipeLeft={() => swipe(profiles[0].userId, "left")}
+            onSwipeRight={() => swipe(profiles[0].userId, "right")}
+          />
+        ) : (
+          <SwipeCard profile={dummyProfile} onSwipeLeft={() => {}} onSwipeRight={() => {}} />
+        )} */}
+      </div>
     </div>
   );
 }
