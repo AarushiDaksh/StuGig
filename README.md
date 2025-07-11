@@ -4,6 +4,34 @@
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+
+## 🚀 Features
+
+✅ Seamless **NextAuth.js** authentication  
+✅ Fully responsive **Client and Freelancer Dashboards**  
+✅ **Gig posting**, bidding, hiring, and status updates  
+✅ **Real-time chat** (Socket.IO) with chat history  
+✅ **Wallet system** for gig payments and tracking  
+✅ **Freelancer match scoring** system  
+✅ Skill-based **Swipe Match** like Tinder/Bumble  
+✅ Secure **MongoDB models** with Mongoose  
+✅ Dark mode toggle (planned)
+
+---
+
+## 📦 Tech Stack
+
+- **Framework:** Next.js 14 (App Router)
+- **Styling:** TailwindCSS, ShadCN UI, Lucide Icons
+- **Auth:** NextAuth.js (JWT)
+- **Database:** MongoDB Atlas + Mongoose
+- **Real-time:** Socket.IO
+- **Validation:** Zod + React Hook Form
+- **State Management:** Redux Toolkit
+- **Deploy:** Vercel
+
+---
+
 ## Getting Started
 
 First, run the development server
