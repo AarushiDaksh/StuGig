@@ -15,7 +15,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ✅ **Freelancer match scoring** system  
 ✅ Skill-based **Swipe Match** like Tinder/Bumble  
 ✅ Secure **MongoDB models** with Mongoose  
-✅ Dark mode toggle (planned)
+✅ Dark mode toggle (planned).
 
 ---
 
