@@ -1,5 +1,16 @@
 
-<img width="935" alt="image" src="https://github.com/user-attachments/assets/bfe23361-1a05-4d89-bff1-83b6c9da9319" />
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/bfe23361-1a05-4d89-bff1-83b6c9da9319" width="850" alt="Dashboard UI" />
+  <img src="https://github.com/user-attachments/assets/9758bbba-1cb2-44fe-a6b2-c28d893b1690" width="850" alt="Gig Details" />
+  <img src="https://github.com/user-attachments/assets/7e14a549-4e3d-417b-94c5-dbc750d836ab" width="850" alt="Bidding UI" />
+  <img src="https://github.com/user-attachments/assets/9fb7fb18-4354-432b-a5a2-4386b86e5cf9" width="850" alt="Chat UI" />
+  <img src="https://github.com/user-attachments/assets/b2b847c5-2fa3-4082-ab79-645c23ed6c18" width="850" alt="Client Dashboard" />
+  <img src="https://github.com/user-attachments/assets/ac931ee1-c969-4439-b285-68635c512f21" width="850" alt="Freelancer Dashboard" />
+  <img src="https://github.com/user-attachments/assets/f9c8e524-3fc7-4032-8360-2d7397731881" width="850" alt="Match Scoring" />
+  <img src="https://github.com/user-attachments/assets/157b9703-5044-4bc4-888b-9e1f58300bb1" width="850" alt="Swipe Match" />
+</p>
+
+
 
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app)
