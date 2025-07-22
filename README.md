@@ -13,7 +13,8 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 ✅ **Real-time chat** (Socket.IO) with chat history  
 ✅ **Wallet system** for gig payments and tracking  
 ✅ **Freelancer match scoring** system  
-✅ Skill-based **Swipe Match** like Tinder/Bumble  
+✅ **Real time rating freelancers
+✅ Skill-based **Swipe Match** like Tinder/Bumble (SKILL-SWAP)
 ✅ Secure **MongoDB models** with Mongoose  
 ✅ Dark mode toggle (planned).
 
