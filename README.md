@@ -7,6 +7,8 @@
   <img src="https://github.com/user-attachments/assets/b2b847c5-2fa3-4082-ab79-645c23ed6c18" width="850" alt="Client Dashboard" />
   <img src="https://github.com/user-attachments/assets/ac931ee1-c969-4439-b285-68635c512f21" width="850" alt="Freelancer Dashboard" />
   <img src="https://github.com/user-attachments/assets/f9c8e524-3fc7-4032-8360-2d7397731881" width="850" alt="Match Scoring" />
+  <img width="850" height="410" alt="image" src="https://github.com/user-attachments/assets/5d9442c5-3b57-4b51-8840-3488da0cbcb7" />
+
   <img src="https://github.com/user-attachments/assets/157b9703-5044-4bc4-888b-9e1f58300bb1" width="850" alt="Swipe Match" />
 </p>
 
