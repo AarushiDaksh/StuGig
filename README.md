@@ -1,3 +1,11 @@
+# StuGig – Student Freelance Marketplace
+
+StuGig is a full-stack freelancing platform designed for students and professionals to **post gigs, bid, hire, chat, and collaborate** — all in one place.  
+Built with **Next.js 14**, it offers a seamless, responsive, and modern freelancing experience with real-time features.
+
+---
+
+##  Project Preview
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/bfe23361-1a05-4d89-bff1-83b6c9da9319" width="850" alt="Dashboard UI" />
@@ -7,48 +15,47 @@
   <img src="https://github.com/user-attachments/assets/b2b847c5-2fa3-4082-ab79-645c23ed6c18" width="850" alt="Client Dashboard" />
   <img src="https://github.com/user-attachments/assets/ac931ee1-c969-4439-b285-68635c512f21" width="850" alt="Freelancer Dashboard" />
   <img src="https://github.com/user-attachments/assets/f9c8e524-3fc7-4032-8360-2d7397731881" width="850" alt="Match Scoring" />
-  <img width="850" height="410" alt="image" src="https://github.com/user-attachments/assets/5d9442c5-3b57-4b51-8840-3488da0cbcb7" />
-
+  <img src="https://github.com/user-attachments/assets/5d9442c5-3b57-4b51-8840-3488da0cbcb7" width="850" alt="Freelancer Match UI" />
   <img src="https://github.com/user-attachments/assets/157b9703-5044-4bc4-888b-9e1f58300bb1" width="850" alt="Swipe Match" />
 </p>
 
+---
 
-...
+## Features Overview
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
-
-
-## 🚀 Features
-
-✅ Seamless **NextAuth.js** authentication  
-✅ Fully responsive **Client and Freelancer Dashboards**  
-✅ **Gig posting**, bidding, hiring, and status updates  
-✅ **Real-time chat** (Socket.IO) with chat history  
-✅ **Wallet system** for gig payments and tracking  
-✅ **Freelancer match scoring** system  
-✅ **Real time rating freelancers
-✅ Skill-based **Swipe Match** like Tinder/Bumble (SKILL-SWAP)
-✅ Secure **MongoDB models** with Mongoose  
-✅ Dark mode toggle (planned).
+| Category | Description |
+|-----------|-------------|
+| Authentication | Secure login and signup with **NextAuth.js (JWT)** |
+| Dashboards | Separate, responsive dashboards for **Clients** and **Freelancers** |
+| Gigs & Bidding | Create gigs, bid on projects, hire freelancers, and track status updates |
+| Real-Time Chat | Integrated **Socket.IO** chat with persistent history |
+| Wallet System | Wallet-based payments and transaction tracking |
+| Match Scoring | AI-driven match scoring system for freelancers |
+| Rating System | Real-time rating and feedback for completed gigs |
+| Swipe Match | Skill-based swipe interface (like Tinder/Bumble) for freelancer-client pairing |
+| Dark Mode | Planned dark/light mode toggle for better accessibility |
 
 ---
 
-## 📦 Tech Stack
+## Tech Stack
 
-- **Framework:** Next.js 14 (App Router)
-- **Styling:** TailwindCSS, ShadCN UI, Lucide Icons
-- **Auth:** NextAuth.js (JWT)
-- **Database:** MongoDB Atlas + Mongoose
-- **Real-time:** Socket.IO
-- **Validation:** Zod + React Hook Form
-- **State Management:** Redux Toolkit
-- **Deploy:** Vercel
+| Layer | Technologies |
+|--------|--------------|
+| **Framework** | Next.js 14 (App Router) |
+| **Styling** | Tailwind CSS, ShadCN UI, Lucide Icons |
+| **Authentication** | NextAuth.js (JWT) |
+| **Database** | MongoDB Atlas + Mongoose |
+| **Real-Time Communication** | Socket.IO |
+| **Validation** | Zod + React Hook Form |
+| **State Management** | Redux Toolkit |
+| **Deployment** | Vercel |
+| **Version Control** | Git + GitHub |
 
 ---
 
 ## Getting Started
 
-First, run the development server
+First, run the development server:
 
 ```bash
 npm run dev
@@ -58,28 +65,3 @@ yarn dev
 pnpm dev
 # or
 bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-=======
-# StuGig
-
