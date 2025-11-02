@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+
 import Link from "next/link";
 import type { Viewport } from "next";
 
@@ -19,9 +19,10 @@ export default function NotFound() {
       <p className="text-muted-foreground max-w-md mb-8">
         The page you are looking for doesn't exist or has been moved.
       </p>
-      <Button asChild>
-        <Link href="/">Return Home</Link>
-      </Button>
+      <Link
+        href="/"
+        className="px-6 py-3 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+        ></Link>
     </div>
   );
 } 

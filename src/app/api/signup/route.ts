@@ -1,43 +1,45 @@
-import connect from "@/utlis/db";
-import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
-import UserFreelancer from "@/models/UserFreelancer";
-import UserClient from "@/models/UserClient";
+import bcrypt from "bcryptjs";
+import { z } from "zod";
+import connect from "@/utlis/db";            
+import User from "@/models/Users";           
 
-export const POST = async (request: Request) => {
+const schema = z.object({
+  username: z.string().min(3),
+  email: z.string().email(),
+  password: z.string().min(8),
+  role: z.string().optional(),              
+});
+
+export async function POST(req: Request) {
   try {
-    const { username, email, password, role } = await request.json();
-
-    if (!username || !email || !password || !role) {
-      return new NextResponse("Missing required fields", { status: 400 });
-    }
-
-    if (!["freelancer", "client"].includes(role)) {
-      return new NextResponse("Invalid role", { status: 400 });
-    }
-
     await connect();
 
-    const Model = role === "freelancer" ? UserFreelancer : UserClient;
-    const existingUser = await Model.findOne({ email });
-
-    if (existingUser) {
-      return new NextResponse("Email is already in use", { status: 409 });
+    const body = await req.json();
+    const parsed = schema.safeParse(body);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const { username, email, password, role } = parsed.data;
 
-    const newUser = new Model({
+    const existing = await User.findOne({ email }).lean();
+    if (existing) {
+      return NextResponse.json({ error: "Email already registered" }, { status: 409 });
+    }
+
+    const hashed = await bcrypt.hash(password, 10);
+
+    await User.create({
       username,
       email,
-      password: hashedPassword,
-      role,
+      password: hashed,
+      role: role ?? "user",
     });
 
-    await newUser.save();
-    return new NextResponse("User registered successfully", { status: 200 });
-  } catch (err) {
-    console.error("Signup error:", err);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    return NextResponse.json({ ok: true }, { status: 201 });
+  } catch (e) {
+    console.error("Signup error:", e);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
-};
+}

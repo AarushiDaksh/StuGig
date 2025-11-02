@@ -11,7 +11,7 @@ const connect = async () => {
 
   try {
     await mongoose.connect(mongoUrl, {
-      dbName: "StuGig",
+      dbName: "Rolio-LinkedIN-Clone",
     });
     console.log("MongoDB connected successfully.");
   } catch (error) {
